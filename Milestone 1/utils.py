@@ -9,8 +9,6 @@ def determine_type_with_index(data, start_index, end_index):
     temp_data = remove_whitespace(data[start_index:end_index])
     return determine_type(temp_data)
 
-
-
 def determine_type(data):
     if any(c.isalpha() for c in data):
         return 'S'
