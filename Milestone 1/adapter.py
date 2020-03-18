@@ -8,7 +8,7 @@
     # generate a dataframe
 
 import utils
-import Dataframe from dataframe
+import dataframe
 
 class Adapter:
     def __init__(self, name):
