@@ -8,7 +8,7 @@
     # generate a dataframe
 
 import utils
-import dataframe
+from dataframe import Dataframe
 
 class Adapter:
     def __init__(self, name):
@@ -60,14 +60,14 @@ class Adapter:
             end_index = 0
             for i in range(len(line)):
                 if line[i] == '<':
-                    start = i+1
+                    start_index = i+1
                     while line[i] != '>':
                         i = i+1
                     if line[i] == '>':
                         end_index = i
                         current_column = current_column + 1
                     temp_schema[current_column] = utils.determine_type_with_index(line, start_index, end_index)
-            determine_hierarchy(temp_schema)
+            self.determine_hierarchy(temp_schema)
             line = self.data_file.readline()
 
     ## Given a schema, determines the heirarchy comparing it against the existing stored schema
@@ -93,7 +93,7 @@ class Adapter:
 
     ## Creates the dataframe from the read in file
     def create_dataframe(self):
-        data = Dataframe(self.file_name, self.schema, self.longest_column, self.nrows)
+        self.data = Dataframe(self.file_name, self.schema, self.longest_column, self.nrows)
 
 # ada = Adapter("ddd")
 # print(ada.determine_type("<ddd> <11> <1.3>",7,9))

@@ -8,7 +8,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(751, 294)
+        MainWindow.resize(740, 777)
         font = QtGui.QFont()
         font.setPointSize(15)
         MainWindow.setFont(font)
@@ -90,6 +90,24 @@ class Ui_MainWindow(object):
 "}")
         self.generate.setObjectName("generate")
 
+        self.generatedDataframe = QtWidgets.QTextBrowser(self.centralwidget)
+        self.generatedDataframe.setEnabled(True)
+        self.generatedDataframe.setGeometry(QtCore.QRect(10, 300, 711, 461))
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        font.setPointSize(11)
+        self.generatedDataframe.setFont(font)
+        self.generatedDataframe.setStyleSheet("QTextBrowser#generatedDataframe {\n"
+"    background-color: rgb(238, 238, 236);\n"
+"      border-style: outset;\n"
+"    border-width: 2px;\n"
+"    border-radius: 10px;\n"
+"    border-color: rgb(0, 0, 0);\n"
+"    color: rgb(0, 0, 0);\n"
+"}\n"
+"")
+        self.generatedDataframe.setObjectName("generatedDataframe")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -107,6 +125,11 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; -qt-user-state:65536; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p></body></html>"))
         self.logo.setText(_translate("MainWindow", "<html><head/><body><p><img src=\":/logo/eau_logo.png\"/></p></body></html>"))
         self.generate.setText(_translate("MainWindow", "Generate"))
+        self.generatedDataframe.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Serif\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; -qt-user-state:65536; font-family:\'Ubuntu\';\"><br /></p></body></html>"))
 
     def fileSelect(self):
         self.filePath = QFileDialog.getOpenFileName()[0]

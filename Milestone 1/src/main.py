@@ -1,7 +1,8 @@
 from mainUI import Ui_MainWindow
-import adapter
+from adapter import Adapter
 from PyQt5 import QtCore, QtGui, QtWidgets
-import dataframe
+from dataframe import Dataframe
+import sys
 
 class Main:
     def  __init__(self):
@@ -9,7 +10,6 @@ class Main:
 
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
