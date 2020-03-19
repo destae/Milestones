@@ -1,2 +1,6 @@
 .vscode/*
 Milestone 1/src/__pycache__/*
+Milestone 1/test/__pycache__/
+src/__pycache__/
+__pycache__
+Milestone 1/src/__pycache__/dataframe.cpython-36.pyc

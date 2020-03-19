@@ -1,4 +1,5 @@
-import utils
+from src import utils
+import os
 
 # What is a dataframe?
     # Has a schema
@@ -7,8 +8,8 @@ import utils
     # creates the 2D array from the information collected
     # stores the data
 class Dataframe:
-    def __init__(self, name, schema, ncols, nrows):
-        self.file_name = name
+    def __init__(self, file_name: str, schema, ncols: int, nrows: int):
+        self.file_name = file_name
         self.schema = schema
         self.ncols = ncols
         self.nrows = nrows
@@ -18,6 +19,7 @@ class Dataframe:
 
     ## Opens the file
     def file_open(self):
+        print(f"this is the working dir {os.getcwd()}")
         self.data_file = open(self.file_name,'r')
 
     ## Closes the file

@@ -2,5 +2,15 @@ run:
 	- make build
 
 build:
+	cd data; unzip data.zip 
 	docker build -t cs4500:0.1 .
-	- docker run -ti -v "$$(pwd)/src":/src cs4500:0.1 bash -c "cd ./src; python3 main.py"
+
+run_test:
+	-python3 -m unittest
+
+clean:
+	- rm data/*.csv
+	- rm data/*.sor
+
+
+.PHONY: clean
