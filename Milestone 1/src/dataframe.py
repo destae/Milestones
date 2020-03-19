@@ -1,12 +1,11 @@
+import utils
+
 # What is a dataframe?
     # Has a schema
     # Has a 2D array of rows and columns that contain data
     # determines the number of rows and columns from the file given
     # creates the 2D array from the information collected
     # stores the data
-
-import utils
-
 class Dataframe:
     def __init__(self, name, schema, ncols, nrows):
         self.file_name = name

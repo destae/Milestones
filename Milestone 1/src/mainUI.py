@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QPushButton
+import resources_rc
 
 
 class Ui_MainWindow(object):
@@ -141,4 +142,3 @@ class Ui_MainWindow(object):
     def generateDataframe(self):
         print("Will generate the Dataframe here")
 
-import resources_rc
