@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QPushButton
 
+from adapter import Adapter
+from dataframe import Dataframe
 
 class Ui_MainWindow(object):
     def __init__(self):
@@ -139,6 +141,9 @@ class Ui_MainWindow(object):
         return self.filePath
 
     def generateDataframe(self):
+        current_adapter = Adapter(self.retrieveFileName())
+        
+
         print("Will generate the Dataframe here")
 
 import resources_rc

@@ -95,6 +95,9 @@ class Adapter:
     def create_dataframe(self):
         self.data = Dataframe(self.file_name, self.schema, self.longest_column, self.nrows)
 
+    def retrieve_dataframe(self):
+        return self.data
+
 # ada = Adapter("ddd")
 # print(ada.determine_type("<ddd> <11> <1.3>",7,9))
 # print(ada.determine_type("<ddd> <11> <1.3>",11,14))
