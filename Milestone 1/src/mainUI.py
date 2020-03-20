@@ -143,7 +143,8 @@ class Ui_MainWindow(object):
 
     def generateDataframe(self):
         current_adapter = Adapter(self.retrieveFileName())
-        
+        current_dataframe = current_adapter.retrieve_dataframe()
+        self.generatedDataframe.setText(current_dataframe.dataframe_to_string())
 
         print("Will generate the Dataframe here")
 

@@ -52,7 +52,7 @@ class Adapter:
         self.data_file.seek(0)
         line = self.data_file.readline()
         line_count = 0
-        while line or line_count < 500:
+        while line and line_count < 500:
             temp_schema = [None] * self.longest_column
             start_index = 0
             end_index = 0
@@ -64,7 +64,7 @@ class Adapter:
                         i = i+1
                     if line[i] == '>':
                         end_index = i
-                        current_column = current_column + 1
+                        current_column += 1
                     temp_schema[current_column] = utils.determine_type_with_index(line, start_index, end_index)
             self.determine_hierarchy(temp_schema)
             line = self.data_file.readline()
@@ -82,6 +82,7 @@ class Adapter:
                 self.schema[i] = 'I'
             elif elem == 'B' and (self.schema[i] != 'S' and self.schema[i] != 'F' and self.schema[i] != 'I'):
                 self.schema[i] = 'B'
+            i += 1
 
     ## Finds the number of rows in a file
     def determine_number_of_rows(self):
@@ -97,9 +98,3 @@ class Adapter:
 
     def retrieve_dataframe(self):
         return self.data
-        
-
-# ada = Adapter("ddd")
-# print(ada.determine_type("<ddd> <11> <1.3>",7,9))
-# print(ada.determine_type("<ddd> <11> <1.3>",11,14))
-# print(ada.determine_type("<   -1  > <11> <1.3>",1,8))
