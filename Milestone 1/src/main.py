@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from mainUI import Ui_MainWindow
 from adapter import Adapter
 from PyQt5 import QtCore, QtGui, QtWidgets
