@@ -49,15 +49,14 @@ class Adapter:
 
     ## Determines the schema of the file
     def determine_schema(self):
-        start_index = 0
-        end_index = 0
-        current_column = -1
         self.data_file.seek(0)
         line = self.data_file.readline()
-        while line:
+        line_count = 0
+        while line or line_count < 500:
             temp_schema = [None] * self.longest_column
             start_index = 0
             end_index = 0
+            current_column = -1
             for i in range(len(line)):
                 if line[i] == '<':
                     start_index = i+1
@@ -69,6 +68,7 @@ class Adapter:
                     temp_schema[current_column] = utils.determine_type_with_index(line, start_index, end_index)
             self.determine_hierarchy(temp_schema)
             line = self.data_file.readline()
+            line_count += 1
 
     ## Given a schema, determines the heirarchy comparing it against the existing stored schema
     def determine_hierarchy(self, schema):
@@ -97,6 +97,7 @@ class Adapter:
 
     def retrieve_dataframe(self):
         return self.data
+        
 
 # ada = Adapter("ddd")
 # print(ada.determine_type("<ddd> <11> <1.3>",7,9))

@@ -13,6 +13,9 @@ def determine_type(data):
     if any(c.isalpha() for c in data):
         return 'S'
 
+    elif "\"" in data:
+        return 'S'
+
     elif "." in data:
         return 'F'
 
