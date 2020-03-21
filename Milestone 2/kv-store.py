@@ -1,4 +1,4 @@
-import dataframe
+from dataframe import Dataframe
 
 class Key:
     def __init__(self, name: str, home: int):
@@ -21,6 +21,7 @@ class KeyValue:
     def __init__(self, key: Key, value):
         self.key = key
         self.value = value
+        self.ncols_breakout = 0
     
     def get_key(self):
         return self.key
@@ -36,9 +37,22 @@ class KeyValue:
     
     def get_home_node(self):
         return self.key.get_home()
+    
+    def set_ncols_breakout(self, breakout: int):
+        self.ncols_breakout = breakout
 
 class KeyValueStore:
-    def __init__(self, dataframe):
-        self.dataframe_reference = dataframe
-        self.column_breakout: int = 0 # this indicates the number of columns each key recieves, it is something that can be re-calculated 
+    def __init__(self, data: Dataframe):
+        self.dataframe_reference = data
         self.key_store: list  = [] # empty during initialisation -- the max size it can be is the number of columns from the dataframe that this key store contains
+
+    def add_key_value(self, keyvalue: KeyValue):
+        self.key_store.append(keyvalue)
+
+    def calculate_breakout(self, array_size: int, ncols: int):
+        if array_size % ncols != 0:
+            tmp_val = array_size % ncols
+        else: 
+            for elem in self.key_store:
+                elem.set_ncols_breakout(array_size/ncols)
+            
