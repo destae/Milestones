@@ -4,6 +4,7 @@ from adapter import Adapter
 from PyQt5 import QtCore, QtGui, QtWidgets
 from dataframe import Dataframe
 import sys
+sys.path.append("...")
 
 class Main:
     def  __init__(self):
