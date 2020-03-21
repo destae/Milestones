@@ -17,6 +17,12 @@ class Dataframe:
         self.file_open()
         self.read_file()
         self.file_close()
+    
+    def get_nrows(self):
+        return self.nrows
+
+    def get_ncols(self):
+        return self.ncols
 
     ## Opens the file
     def file_open(self):

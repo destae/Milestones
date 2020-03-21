@@ -25,7 +25,7 @@ class Adapter:
 
     ## Opens the file
     def file_open(self):
-        self.data_file = open(self.file_name,'r')
+        self.data_file = open(self.file_name, 'r')
 
     ## Closes the file
     def file_close(self):
