@@ -2,11 +2,9 @@
 
 import os
 import unittest
-from unittest import mock
 from milestone_2.src.adapter import Adapter
 
-
-class Test_Adapter(unittest.TestCase):
+class TestAdapter(unittest.TestCase):
     """This is a docstring """
 
     def setUp(self):
@@ -15,6 +13,9 @@ class Test_Adapter(unittest.TestCase):
 
     def test_destermine_schema(self):
         """ Tests gettings schema"""
-                
-        schema = [[], []]
+        schema = ['S', 'I', 'I', 'S', 'I', 'I', 'I']
         self.assertEqual(schema, self.adapter.schema)
+
+    def test_find_longest_column(self):
+        longest_col = 7
+        self.assertEqual(longest_col, self.adapter.longest_column)
