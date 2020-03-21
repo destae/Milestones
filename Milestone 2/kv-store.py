@@ -40,5 +40,5 @@ class KeyValue:
 class KeyValueStore:
     def __init__(self, dataframe):
         self.dataframe_reference = dataframe
-        self.row_breakout: int = 0 # this indicates the number of rows each key recieves, it is something that can be recalculated 
-        self.key_store: list  = [] # empty during initialisation -- the max size it can be is the number of rows from the dataframe that this key store contains
+        self.column_breakout: int = 0 # this indicates the number of columns each key recieves, it is something that can be re-calculated 
+        self.key_store: list  = [] # empty during initialisation -- the max size it can be is the number of columns from the dataframe that this key store contains
