@@ -1,25 +1,11 @@
-from dataframe import Dataframe
+from milestone_2.src.key import Key
 
-class Key:
-    def __init__(self, name: str, home: int):
-        self.name = name
-        self.home = home
-
-    def set_home(self, home: int):
-        self.home = home
-    
-    def get_home(self):
-        return self.home
-
-    def set_name(self, name: str):
-        self.name = name
-
-    def get_name(self):
-        return self.name
 
 class KeyValueStore:
-    def __init__(self):
-        self.home_node = -1
+    """Key value store that is the backbone of this application"""
+
+    def __init__(self,home_node=None):
+        self.home_node = home_node
         self.key_store = {}
 
     def add_key_value(self, key: Key, value):

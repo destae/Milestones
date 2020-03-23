@@ -5,9 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "curr",
+            "type": "python",
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "run",
             "type": "python",
-            "env": {"PYTHONPATH": "${workspaceRoot}"},
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
             "request": "launch",
             "program": "${workspaceFolder}/milestone_2/src/main.py",
             "console": "integratedTerminal"
