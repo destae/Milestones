@@ -1,6 +1,6 @@
 {
     "python.linting.enabled": true,
-    "python.unitTest.cwd": "${workspaceRoot}",
+    "python.testing.cwd": "${workspaceRoot}",
     "python.testing.unittestArgs": [
         "-v",
         "-s",
