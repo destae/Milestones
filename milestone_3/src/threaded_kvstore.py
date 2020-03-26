@@ -1,8 +1,9 @@
 from kv_store import *
 from adapter import *
+from queue import *
 
 #A thread running node one
-def node_one():
+def node_one(shared_que: Queue):
     kv_store_1 = KeyValueStore()
     kv_store_1.update_home_node(1)
 
@@ -17,4 +18,8 @@ def node_one():
 
     kv_store_1.add_key_value(key_1_1, dataframe_1)
     kv_store_1.add_key_value(key_1_2, dataframe_2)
+
+
+    while True:
+        shared_que.get(block=True, timeout=False, daemon)
 

@@ -35,6 +35,10 @@ class Dataframe:
     ## Reads the file
     def read_file(self):
         self.data_file.seek(0)
+        # this function needs to take in a from and len. These are lines 
+        # roll until you get to the from line, and create the 2d array below until you reach the len line.
+        # the while loop does not need to change, just add a new case. 
+        # prior to the loop add another while loop that exits once the from line is reached. 
         line = self.data_file.readline()
         current_row = -1
         while line:

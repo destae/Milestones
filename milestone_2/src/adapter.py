@@ -3,10 +3,7 @@
 # It is meant to be able to:
     # open a file
     # read a file
-    # determine the longest number of columnsfrom kv_store import *
-#A thread running node one
-def node_one():
-    
+    # determine the longest number of columns
     # determine the schema
     # generate a dataframe
 
@@ -21,10 +18,7 @@ class Adapter:
         self.find_longest_column()
         self.schema = [None] * self.longest_column
         self.determine_schema()
-        self.nrows = 0from kv_store import *
-#A thread running node one
-def node_one():
-    
+        self.nrows = 0
         self.determine_number_of_rows()
         self.file_close()
         self.create_dataframe()
