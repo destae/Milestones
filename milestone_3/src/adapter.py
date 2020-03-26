@@ -7,21 +7,22 @@
     # determine the schema
     # generate a dataframe
 
-import milestone_2.src.utils as utils
-from milestone_2.src.dataframe import Dataframe
+import utils
+from dataframe import *
+from schema import *
 
 class Adapter:
     def __init__(self, name):
         self.file_name = name
         self.longest_column = 0
         self.file_open()
-        self.find_longest_column()
-        self.schema = [None] * self.longest_column
-        self.determine_schema()
+        self.find_longest_column() ## determines the longest row in the entire file (might need to change, but who knows TODO)
+        self.sch = [None] * self.longest_column
+        self.determine_schema() ## determines an array of values that represents part of the schema
+        self.schema = Schema(self.sch) ## creates a schema object
         self.nrows = 0
-        self.determine_number_of_rows()
+        self.determine_number_of_rows() ## determines the number of total lines in the file
         self.file_close()
-        self.create_dataframe()
 
     ## Opens the file
     def file_open(self):
@@ -75,13 +76,13 @@ class Adapter:
         i = 0
         for elem in schema:
             if elem == 'S':
-                self.schema[i] = 'S'
-            elif elem == 'F' and self.schema[i] != 'S':
-                self.schema[i] = 'F'
-            elif elem == 'I' and (self.schema[i] != 'S' and self.schema[i] != 'F'):
-                self.schema[i] = 'I'
-            elif elem == 'B' and (self.schema[i] != 'S' and self.schema[i] != 'F' and self.schema[i] != 'I'):
-                self.schema[i] = 'B'
+                self.sch[i] = 'S'
+            elif elem == 'F' and self.sch[i] != 'S':
+                self.sch[i] = 'F'
+            elif elem == 'I' and (self.sch[i] != 'S' and self.sch[i] != 'F'):
+                self.sch[i] = 'I'
+            elif elem == 'B' and (self.sch[i] != 'S' and self.sch[i] != 'F' and self.sch[i] != 'I'):
+                self.sch[i] = 'B'
             i += 1
 
     ## Finds the number of rows in a file
@@ -93,8 +94,41 @@ class Adapter:
             line = self.data_file.readline()
 
     ## Creates the dataframe from the read in file
-    def create_dataframe(self):
-        self.data = Dataframe(self.file_name, self.schema, self.longest_column, self.nrows)
+    def create_dataframe(self, from, len):
+        ## this is where the read file should GO TODO TODO
+        # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
 
-    def retrieve_dataframe(self):
-        return self.data
+        ## Reads the file
+    def read_file(self):
+        self.data_file.seek(0)
+        # this function needs to take in a from and len. These are lines 
+        # roll until you get to the from line, and create the 2d array below until you reach the len line.
+        # the while loop does not need to change, just add a new case. 
+        # prior to the loop add another while loop that exits once the from line is reached. 
+        line = self.data_file.readline()
+        current_row = -1
+        while line:
+            current_row = current_row + 1
+            start_index = 0
+            end_index = 0
+            current_column = -1
+            for i in range(len(line)):
+                if line[i] == '<':
+                    start_index = i+1
+                    while line[i] != '>':
+                        i = i+1
+                    if line[i] == '>':
+                        end_index = i
+                        current_column += 1
+                        self.data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
+            line = self.data_file.readline()
+
+    ## Extracts the data from a set index from a given line -- and determines if the data is valid
+    def extract_data(self, data, current_column):
+        temp_data = utils.remove_whitespace(data)
+        data_type = utils.determine_type(temp_data)
+        
+        if data_type == self.schema[current_column]:       
+            return temp_data
+        else:
+            return ''
