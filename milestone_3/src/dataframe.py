@@ -7,6 +7,7 @@ import os
     # determines the number of rows and columns from the file given
     # creates the 2D array from the information collected
     # stores the data
+    
 class Dataframe:
     def __init__(self, file_name: str, schema, ncols: int, nrows: int):
         self.file_name = file_name
