@@ -26,9 +26,6 @@ class FileUtils:
                 row_str += "\n"
                 f.write(row_str)
     
-            
-
-
 if __name__ == "__main__":
     print(os.getcwd())
     f = FileUtils("Milestone 1/data/recipe.csv")

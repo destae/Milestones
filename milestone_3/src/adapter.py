@@ -72,9 +72,9 @@ class Adapter:
             line_count += 1
 
     ## Given a schema, determines the heirarchy comparing it against the existing stored schema
-    def determine_hierarchy(self, schema):
+    def determine_hierarchy(self, schema_list: list):
         i = 0
-        for elem in schema:
+        for elem in schema_list:
             if elem == 'S':
                 self.sch[i] = 'S'
             elif elem == 'F' and self.sch[i] != 'S':
@@ -94,7 +94,7 @@ class Adapter:
             line = self.data_file.readline()
 
     ## Creates the dataframe from the read in file
-    def create_dataframe(self, from, len):
+    def create_dataframe(self, start: int, end: int):
         ## this is where the read file should GO TODO TODO
         # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
 
