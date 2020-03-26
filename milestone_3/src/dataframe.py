@@ -1,17 +1,7 @@
 import utils
 import os
-from schema import *
+from milestone_3.src.schema import Schema
 
-<<<<<<< HEAD
-# What is a dataframe?
-    # Has a schema
-    # Has a 2D array of rows and columns that contain data
-    # determines the number of rows and columns from the file given
-    # creates the 2D array from the information collected
-    # stores the data
-    
-=======
->>>>>>> 5182b6159b3784c08c029b8ae107a4f7096c3810
 class Dataframe:
     def __init__(self, data: list, sch: Schema:
         self.schema = sch
