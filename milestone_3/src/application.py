@@ -5,8 +5,9 @@ from abc import ABC, abstractmethod
 class Application(ABC):
     """Abstract class"""
 
-    def __init__(self, idx):
+    def __init__(self, idx, kv):
         self.idx = idx
+        self.kv = kv
         super().__init__()
 
     @abstractmethod

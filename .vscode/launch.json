@@ -7,7 +7,9 @@
         {
             "name": "run",
             "type": "python",
-            "env": {"PYTHONPATH": "${workspaceRoot}"},
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
             "request": "launch",
             "program": "${workspaceFolder}/milestone_2/src/main.py",
             "console": "integratedTerminal"

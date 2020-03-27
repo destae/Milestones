@@ -19,7 +19,7 @@ class Key:
 
 class KeyValueStore:
     def __init__(self):
-        self.home_node = -1
+        self.home_node = -1 
         self.key_store = {}
 
     def add_key_value(self, key: Key, value):
@@ -37,8 +37,11 @@ class KeyValueStore:
     def update_home_node(self, home_node):
         self.home_node = home_node
     
-    def get_value(self, key: Key):
+    def get_value(self, key: Key) -> Dataframe:
         if key.get_home() == self.home_node:
             return self.key_store.get(key.get_name())
         else:
             print("Whoops...not my house!")
+
+    def wait_and_get(self, key: Key) -> Dataframe:
+        return self.get_value(key)

@@ -7,9 +7,9 @@
     # determine the schema
     # generate a dataframe
 
-import utils
-from dataframe import *
-from schema import *
+from milestone_3.src import utils
+from milestone_3.src.dataframe import Dataframe
+from milestone_3.src.schema import Schema
 
 class Adapter:
     def __init__(self, name):
@@ -95,12 +95,13 @@ class Adapter:
 
     ## Creates the dataframe from the read in file
     def create_dataframe(self, start: int, end: int):
-        ## this is where the read file should GO TODO TODO
+        ## this is where the read file should GO TODO 
         # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
+        pass
 
         ## Reads the file
     def read_file(self):
-        self.data_file.seek(0)
+        self.data_file.seTODOek(0)
         # this function needs to take in a from and len. These are lines 
         # roll until you get to the from line, and create the 2d array below until you reach the len line.
         # the while loop does not need to change, just add a new case. 
@@ -128,7 +129,7 @@ class Adapter:
         temp_data = utils.remove_whitespace(data)
         data_type = utils.determine_type(temp_data)
         
-        if data_type == self.schema[current_column]:       
+        if data_type == self.sch[current_column]:       
             return temp_data
         else:
             return ''

@@ -2,13 +2,12 @@
 
 import os
 import unittest
-from milestone_2.src.adapter import Adapter
+from milestone_3.src.adapter import Adapter
 
 class TestAdapter(unittest.TestCase):
-    """This is a docstring """
 
     def setUp(self):
-        self.test_file_name = f"{os.getcwd()}/milestone_2/test/test_data.sor"
+        self.test_file_name = f"{os.getcwd()}/milestone_3/test/test_data.sor"
         self.adapter = Adapter(name=self.test_file_name)
 
     def test_destermine_schema(self):

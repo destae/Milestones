@@ -7,12 +7,11 @@ from milestone_3.src.dataframe import Dataframe
 
 class Demo(Application):
 
-
-    def __init__(self, idx):
-        super().__init__(idx)
+    def __init__(self, idx: int, kv: KeyValueStore):
+        super().__init__(idx, kv)
         self.main = Key("main", 0)
         self.verify = Key("verif", 0)
-        self.check = Key("ch",0)
+        self.check = Key("ch", 0)
 
     def run_(self):
         if self.this_node() == 0:
@@ -24,42 +23,24 @@ class Demo(Application):
         else:
             pass
     
-
-#   void producer() {
-#     size_t SZ = 100*1000;
-#     double* vals = new double[SZ];
-#     double sum = 0;
-#     for (size_t i = 0; i < SZ; ++i) sum += vals[i] = i;
-#     DataFrame::fromArray(&main, &kv, SZ, vals);
-#     DataFrame::fromScalar(&check, &kv, sum);
-#   }
- 
-
     def producer(self):
         SZ = 100*100
         vals = [float(i) for i in range(0,SZ)]
-        sum = float(sum(vals))
-        DF = Dataframe.fromArray(self.main, )
-        DF = Dataframe.fromScalar(self.check)
+        sum_vals = float(sum(vals))
+        Dataframe.from_array(self.main, self.kv, SZ, vals)
+        Dataframe.from_scalar(self.check,self.kv,sum_vals)
 
     def counter(self):
-        pass
-    
+        v = self.kv.wait_and_get(self.main)
+        sum_vals = sum([v.get_double(0,i) for i in range(0,100*100)])
+        Dataframe.from_scalar(self.verify,self.kv,sum_vals)
 
     def summarizer(self):
-        pass
+        result = self.kv    .wait_and_get(self.verify)
+        expected = self.kv.wait_and_get(self.check)
+        assert expected.get_double(0, 0) == result.get_double(0, 0) % "Failure"
     
-#   void counter() {
-#     DataFrame* v = kv.waitAndGet(main);
-#     size_t sum = 0;
-#     for (size_t i = 0; i < 100*1000; ++i) sum += v->get_double(0,i);
-#     p("The sum is  ").pln(sum);
-#     DataFrame::fromScalar(&verify, &kv, sum);
-#   }
- 
-#   void summarizer() {
-#     DataFrame* result = kv.waitAndGet(verify);
-#     DataFrame* expected = kv.waitAndGet(check);
-#     pln(expected->get_double(0,0)==result->get_double(0,0) ? "SUCCESS":"FAILURE");
-#   }
-# };
+if __name__ == "__main__":
+    KV = KeyValueStore()
+    d = Demo(0,KV)
+    

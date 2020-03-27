@@ -1,7 +1,9 @@
 import os
 
+
 class Schema:
-    def __init__(self, sch: list)
+
+    def __init__(self, sch: list):
         self.schema_list = sch
         self.ncols = 0
         self.nrows = 0
