@@ -1,4 +1,4 @@
-import utils
+from milestone_3.src import utils
 import os
 from milestone_3.src.kv_store import Key
 from milestone_3.src.kv_store import KeyValueStore
@@ -21,12 +21,12 @@ class Dataframe:
 
     ## Gets the raw value of the data stored at the given coordinates
     def get_value(self, col: int, row: int):
-        if (col < self.ncols and col >= 0 and row >= 0 and row < self.nrows):
+        if (col < self.get_ncols() and col >= 0 and row >= 0 and row < self.get_nrows()):
             return self.data[row][col]
 
     ## Returns the type of of the value stored at the given coordinates
     def get_type(self, col: int, row: int):
-        if (col < self.ncols and col >= 0 and row >= 0 and row < self.nrows):
+        if (col < self.get_ncols() and col >= 0 and row >= 0 and row < self.get_nrows()):
             return self.schema.get_schema()[col]
 
     ## Constructs a string from the dataframe

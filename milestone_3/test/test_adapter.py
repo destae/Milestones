@@ -3,6 +3,7 @@
 import os
 import unittest
 from milestone_3.src.adapter import Adapter
+from milestone_3.src.adapter import Schema
 
 class TestAdapter(unittest.TestCase):
 
@@ -12,7 +13,8 @@ class TestAdapter(unittest.TestCase):
 
     def test_destermine_schema(self):
         """ Tests gettings schema"""
-        schema = ['S', 'I', 'I', 'S', 'I', 'I', 'I']
+        schema_list = ['S', 'I', 'I', 'S', 'I', 'I', 'I']
+        schema = Schema(schema_list)
         self.assertEqual(schema, self.adapter.schema)
 
     def test_find_longest_column(self):
