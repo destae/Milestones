@@ -25,7 +25,6 @@ def determine_type(data):
     elif data == "1" or data == "0":
         return 'B'
 
-
     elif not(any(c.isalnum() for c in data)):
         return 'B'
 

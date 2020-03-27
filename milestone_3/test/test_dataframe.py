@@ -28,11 +28,19 @@ class TestDataframe(unittest.TestCase):
 
     def test_get_value_1(self):
        self.assertEqual(31490, self.data_frame.get_value(1,1))
-       
+      
     def test_get_value_2(self):
         self.assertEqual(130, self.data_frame.get_value(2,2))
 
     def test_get_value_3(self):
         self.assertEqual('2003-04-14', self.data_frame.get_value(3,3))
+
+    def test_dataframe_to_string(self):
+        self.assertEqual( "['arriba', 2, 1, '2005-09-16', 55, 11, 7]\n"
+                        + "['pizza', 31490, 30, '2002-06-17', 30, 9, 6]\n"
+                        + "['chili', 112140, 130, '2005-02-25', 130, 6, 13]\n"
+                        + "['potatoes', 59389, 45, '2003-04-14', 45, 11, 11]\n"
+                        + "['ketchup', 44061, 190, '2002-10-25', 190, 5, 8]\n",
+        self.data_frame.dataframe_to_string())
 
  

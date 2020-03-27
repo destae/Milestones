@@ -33,17 +33,15 @@ class Dataframe:
     def dataframe_to_string(self):
         tmp_string = ""
         for row in self.data:
-            tmp_string += "".join(
-                [ c for c in str(row) if c not in ('(', ')','[',']',',')]
-            )
-            tmp_string += "\n"
+            tmp_string += str(row) + "\n"
+        print(tmp_string)
         return tmp_string
 
     @classmethod
-    def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list):
-        pass
-
+    def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list, arr_type: str='B'):
+        schem = Schema([arr_type], ncols=1, nrows=size)
+        return cls(array, schem)
     
     @classmethod
-    def from_scalar(cls, key: Key, kv: KeyValueStore, scalar: int):
+    def from_scalar(cls, key: Key, kv: KeyValueStore, scalar: int, scalar_type: str='B'):
         pass

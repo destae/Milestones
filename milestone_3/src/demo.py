@@ -27,8 +27,8 @@ class Demo(Application):
         SZ = 100*100
         vals = [float(i) for i in range(0,SZ)]
         sum_vals = float(sum(vals))
-        Dataframe.from_array(self.main, self.kv, SZ, vals)
-        Dataframe.from_scalar(self.check,self.kv,sum_vals)
+        d = Dataframe.from_array(self.main, self.kv, SZ, vals, "F")
+        Dataframe.from_scalar(self.check,self.kv,sum_vals, "F")
 
     def counter(self):
         v = self.kv.wait_and_get(self.main)
@@ -43,4 +43,5 @@ class Demo(Application):
 if __name__ == "__main__":
     KV = KeyValueStore()
     d = Demo(0,KV)
+    d.run_()
     
