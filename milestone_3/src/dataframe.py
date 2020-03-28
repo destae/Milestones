@@ -5,12 +5,26 @@ from milestone_3.src.kv_store import KeyValueStore
 from milestone_3.src.schema import Schema
 
 class Dataframe:
-    def __init__(self, data: list, sch: Schema):
+    def __init__(self, data: list, sch: Schema, key: Key=None,kv: KeyValueStore=None):
         self.schema = sch
         self.ncols = sch.get_ncols()
         self.nrows = sch.get_nrows()
         self.data = data
+        self.key = key
+        self.kv = kv
     
+    #Constructor that creates a new Dataframe from an array
+    @classmethod
+    def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list, arr_type: str='B'):
+        schem = Schema([arr_type], ncols=1, nrows=size)
+        return cls([array], schem,key=key,kv=kv)
+    
+    #Constructor that creates a new Dataframe with a single entry: a scalar value
+    @classmethod
+    def from_scalar(cls, key: Key, kv: KeyValueStore, scalar: int, scalar_type: str='B'):
+        schem = Schema([scalar_type], ncols=1, nrows=1)
+        return cls([[scalar]], schem,key=key,kv=kv)
+
     ## Retrieves the number of rows of the dataframe
     def get_nrows(self):
         return self.nrows
@@ -20,7 +34,7 @@ class Dataframe:
         return self.ncols
 
     ## Gets the raw value of the data stored at the given coordinates
-    def get_value(self, col: int, row: int):
+    def get_value(self, row: int, col: int):
         if (col < self.get_ncols() and col >= 0 and row >= 0 and row < self.get_nrows()):
             return self.data[row][col]
 
@@ -37,11 +51,4 @@ class Dataframe:
         print(tmp_string)
         return tmp_string
 
-    @classmethod
-    def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list, arr_type: str='B'):
-        schem = Schema([arr_type], ncols=1, nrows=size)
-        return cls(array, schem)
     
-    @classmethod
-    def from_scalar(cls, key: Key, kv: KeyValueStore, scalar: int, scalar_type: str='B'):
-        pass

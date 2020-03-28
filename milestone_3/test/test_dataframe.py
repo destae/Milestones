@@ -3,6 +3,7 @@ import unittest
 from unittest import mock
 from milestone_3.src.dataframe import Dataframe
 from milestone_3.src.adapter import Schema
+from milestone_3.src.kv_store import Key, KeyValueStore
 
 
 class TestDataframe(unittest.TestCase):
@@ -43,4 +44,37 @@ class TestDataframe(unittest.TestCase):
                         + "['ketchup', 44061, 190, '2002-10-25', 190, 5, 8]\n",
         self.data_frame.dataframe_to_string())
 
+    def test_dataframe_from_array(self):
+        vals = [float(i) for i in range(0,500)]
+        key = Key("test",0)
+        kv = KeyValueStore()
+        self.assertEqual(Schema(["F"],ncols=1,nrows=500),
+                         self.data_frame.from_array(key=key,kv=kv,
+                                                    size=500,array=vals,arr_type='F').schema)
+
+    def test_dataframe_from_array2(self):
+        vals = [float(i) for i in range(0,500)]
+        key = Key("test",0)
+        kv = KeyValueStore()
+        self.assertEqual(key,
+                         self.data_frame.from_array(key=key,kv=kv,
+                                                    size=500,array=vals,arr_type='F').key)
+ 
+    def test_dataframe_from_scalar(self):
+        vals = [float(i) for i in range(0,500)]
+        sum_vals=float(sum(vals))
+        key = Key("test",0)
+        kv = KeyValueStore()
+        self.assertEqual(Schema(["F"],ncols=1,nrows=1),
+                         self.data_frame.from_scalar(key=key,kv=kv, 
+                                        scalar=sum_vals, scalar_type='F').schema)
+
+    def test_dataframe_from_scalar2(self):
+        vals = [float(i) for i in range(0,500)]
+        sum_vals = float(sum(vals))
+        key = Key("test",0)
+        kv = KeyValueStore()
+        self.assertEqual(sum_vals,
+                         self.data_frame.from_scalar(key=key,kv=kv,
+                                                    scalar=sum_vals,scalar_type='F').get_value(0,0))
  
