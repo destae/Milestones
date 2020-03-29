@@ -99,30 +99,33 @@ class Adapter:
         # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
         pass
 
-        ## Reads the file
-    def read_file(self):
-        self.data_file.seTODOek(0)
-        # this function needs to take in a from and len. These are lines 
-        # roll until you get to the from line, and create the 2d array below until you reach the len line.
-        # the while loop does not need to change, just add a new case. 
-        # prior to the loop add another while loop that exits once the from line is reached. 
-        line = self.data_file.readline()
-        current_row = -1
-        while line:
-            current_row = current_row + 1
-            start_index = 0
-            end_index = 0
-            current_column = -1
-            for i in range(len(line)):
-                if line[i] == '<':
-                    start_index = i+1
-                    while line[i] != '>':
-                        i = i+1
-                    if line[i] == '>':
-                        end_index = i
-                        current_column += 1
-                        self.data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
+        ## Reads the file, and ret
+    def read_file(self, start: int=0, end: int=(self.nrows-1)):
+        self.data_file.seek(0)
+        if end < start or start < 0 or end < 0 or end > self.nrows-1:
+            print("Error: Invalid start and end lines.")
+        else:
             line = self.data_file.readline()
+            current_row = -1
+            while line and curent_row < start:
+                current_row += 1
+                line = self.data_file.readline()
+
+            while line and curent_row <= end:
+                current_row = current_row + 1
+                start_index = 0
+                end_index = 0
+                current_column = -1
+                for i in range(len(line)):
+                    if line[i] == '<':
+                        start_index = i+1
+                        while line[i] != '>':
+                            i = i+1
+                        if line[i] == '>':
+                            end_index = i
+                            current_column += 1
+                            self.data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
+                line = self.data_file.readline()
 
     ## Extracts the data from a set index from a given line -- and determines if the data is valid
     def extract_data(self, data, current_column):

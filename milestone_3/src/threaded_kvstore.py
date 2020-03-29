@@ -4,9 +4,8 @@ from queue import *
 
 #A thread running node one
 def node_one(shared_que: Queue):
-    kv_store_1 = KeyValueStore()
-    kv_store_1.update_home_node(1)
-
+    kv_store_1 = KeyValueStore(1)
+    
     adpater_1 = Adapter("")
     dataframe_1 = adpater_1.retrieve_dataframe()
 
@@ -15,9 +14,6 @@ def node_one(shared_que: Queue):
 
     key_1_1 = Key("Key_1_1", 1)
     key_1_2 = Key("Key_1_2", 1)
-
-    kv_store_1.add_key_value(key_1_1, dataframe_1)
-    kv_store_1.add_key_value(key_1_2, dataframe_2)
 
 
     while True:
