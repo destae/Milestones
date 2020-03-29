@@ -92,17 +92,11 @@ class Adapter:
             self.nrows += 1
             line = self.data_file.readline()
 
-    ## Creates the dataframe from the read in file
-    def get_next_dataframe(self, start: int, end: int):
-        ## this is where the read file should GO TODO 
-        # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
-        pass
-
     def create_empty_data(self):
         return [[]]
 
-        ## Reads the file, and ret
-    def read_file(self, start: int, end: int):
+    ## Reads the file, and returns the 2D array of data
+    def create_dataframe(self, start: int, end: int):
         data = self.create_empty_data()
         self.data_file.seek(0)
         if end < start or start < 0 or end < 0 or end > self.nrows-1:
@@ -129,6 +123,7 @@ class Adapter:
                             current_column += 1
                             data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
                 line = self.data_file.readline()
+            return data
 
     ## Extracts the data from a set index from a given line -- and determines if the data is valid
     def extract_data(self, data, current_column):
