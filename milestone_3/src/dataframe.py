@@ -5,13 +5,13 @@ from milestone_3.src.kv_store import KeyValueStore
 from milestone_3.src.schema import Schema
 
 class Dataframe:
-    def __init__(self, data: list, sch: Schema, key: Key=None,kv: KeyValueStore=None):
+    ## Initialises the dataframe. Creates a key value pair and inserts it into the Key Value Store
+    def __init__(self, data: list, sch: Schema, key: Key=None, kv: KeyValueStore=None):
         self.schema = sch
         self.ncols = sch.get_ncols()
         self.nrows = sch.get_nrows()
         self.data = data
-        self.key = key
-        self.kv = kv
+        kv.add_key_value(key, self.data)
     
     #Constructor that creates a new Dataframe from an array
     @classmethod

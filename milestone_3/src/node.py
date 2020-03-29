@@ -7,11 +7,17 @@ PRIMARY_ADDR = "127.0.0.2"
 PRIMARY_PORT = 10000
 
 class Node:
-
-    def __init__(self, address, port):
+    ## TODO: we should build on this to be able to send recieve at command
+    ## TODO: create an array of sockets for all the clients that 
+    def __init__(self, address, port, type: String='client'):
         self.server_address = (address, port)
         print(f"Node started with {address} at port: {port}")
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        if type == 'server':
+            self.sock.bind(self.server_address)
+            self.sock.settimeout(None)
+            self.sock.listen(10) ## arbitrary number 
 
     def main(self):
         """Starts the node server, for now only sends one thing"""
