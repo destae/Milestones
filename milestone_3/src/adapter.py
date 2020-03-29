@@ -22,7 +22,6 @@ class Adapter:
         self.schema = Schema(self.sch) ## creates a schema object
         self.nrows = 0
         self.determine_number_of_rows() ## determines the number of total lines in the file
-        self.file_close()
 
     ## Opens the file
     def file_open(self):
@@ -94,24 +93,28 @@ class Adapter:
             line = self.data_file.readline()
 
     ## Creates the dataframe from the read in file
-    def create_dataframe(self, start: int, end: int):
+    def get_next_dataframe(self, start: int, end: int):
         ## this is where the read file should GO TODO 
         # return Dataframe(self.file_name, self.sch, self.longest_column, self.nrows)
         pass
 
+    def create_empty_data(self):
+        return [[]]
+
         ## Reads the file, and ret
-    def read_file(self, start: int=0, end: int=(self.nrows-1)):
+    def read_file(self, start: int, end: int):
+        data = self.create_empty_data()
         self.data_file.seek(0)
         if end < start or start < 0 or end < 0 or end > self.nrows-1:
             print("Error: Invalid start and end lines.")
         else:
             line = self.data_file.readline()
             current_row = -1
-            while line and curent_row < start:
+            while line and current_row < start:
                 current_row += 1
                 line = self.data_file.readline()
 
-            while line and curent_row <= end:
+            while line and current_row <= end:
                 current_row = current_row + 1
                 start_index = 0
                 end_index = 0
@@ -124,7 +127,7 @@ class Adapter:
                         if line[i] == '>':
                             end_index = i
                             current_column += 1
-                            self.data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
+                            data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
                 line = self.data_file.readline()
 
     ## Extracts the data from a set index from a given line -- and determines if the data is valid

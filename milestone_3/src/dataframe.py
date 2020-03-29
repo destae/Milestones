@@ -11,7 +11,9 @@ class Dataframe:
         self.ncols = sch.get_ncols()
         self.nrows = sch.get_nrows()
         self.data = data
-        kv.add_key_value(key, self.data)
+        if kv and key:
+            kv.add_key_value(key, self.data)
+        
     
     #Constructor that creates a new Dataframe from an array
     @classmethod

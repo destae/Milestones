@@ -48,33 +48,29 @@ class TestDataframe(unittest.TestCase):
         vals = [float(i) for i in range(0,500)]
         key = Key("test",0)
         kv = KeyValueStore()
-        self.assertEqual(Schema(["F"],ncols=1,nrows=500),
-                         self.data_frame.from_array(key=key,kv=kv,
-                                                    size=500,array=vals,arr_type='F').schema)
+        d = Dataframe.from_array(key=key,kv=kv, size=500,array=vals,arr_type='F')
+        self.assertEqual(Schema(["F"],ncols=1,nrows=500), d.schema)
 
     def test_dataframe_from_array2(self):
-        vals = [float(i) for i in range(0,500)]
+        vals = [float(i) for i in range(0,5)]
         key = Key("test",0)
         kv = KeyValueStore()
-        self.assertEqual(key,
-                         self.data_frame.from_array(key=key,kv=kv,
-                                                    size=500,array=vals,arr_type='F').key)
+        d = Dataframe.from_array(key=key,kv=kv,size=5,array=vals,arr_type='F')
+        self.assertEqual([vals], d.data)
  
     def test_dataframe_from_scalar(self):
-        vals = [float(i) for i in range(0,500)]
+        vals = [float(i) for i in range(0,5)]
         sum_vals=float(sum(vals))
         key = Key("test",0)
         kv = KeyValueStore()
-        self.assertEqual(Schema(["F"],ncols=1,nrows=1),
-                         self.data_frame.from_scalar(key=key,kv=kv, 
-                                        scalar=sum_vals, scalar_type='F').schema)
+        d = Dataframe.from_scalar(key=key,kv=kv, scalar=sum_vals, scalar_type='F')
+        self.assertEqual(Schema(["F"],ncols=1,nrows=1), d.schema)
 
     def test_dataframe_from_scalar2(self):
-        vals = [float(i) for i in range(0,500)]
+        vals = [float(i) for i in range(0,5)]
         sum_vals = float(sum(vals))
         key = Key("test",0)
         kv = KeyValueStore()
-        self.assertEqual(sum_vals,
-                         self.data_frame.from_scalar(key=key,kv=kv,
-                                                    scalar=sum_vals,scalar_type='F').get_value(0,0))
+        d = Dataframe.from_scalar(key=key,kv=kv, scalar=sum_vals,scalar_type='F')
+        self.assertEqual(sum_vals, d.get_value(0,0))
  
