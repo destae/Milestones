@@ -134,3 +134,7 @@ class Adapter:
             return temp_data
         else:
             return ''
+
+    ## Retrives the schema object of the adapter   
+    def retrieve_schema(self):
+        return self.schema
