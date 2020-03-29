@@ -21,7 +21,7 @@
                 "PYTHONPATH": "${workspaceRoot}"
             },
             "request": "launch",
-            "program": "${workspaceFolder}/milestone_2/src/main.py",
+            "program": "${workspaceFolder}/milestone_3/src/demo.py",
             "console": "integratedTerminal"
         }
     ]
