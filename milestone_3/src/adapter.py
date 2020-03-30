@@ -92,23 +92,20 @@ class Adapter:
             self.nrows += 1
             line = self.data_file.readline()
 
-    def create_empty_data(self):
-        return [[]]
-
     ## Reads the file, and returns the 2D array of data
     def create_dataframe(self, start: int, end: int):
-        data = self.create_empty_data()
-        self.data_file.seek(0)
         if end < start or start < 0 or end < 0 or end > self.nrows-1:
             print("Error: Invalid start and end lines.")
         else:
+            data = [['' for x in range(self.longest_column)] for y in range(end-start+1)]
+            self.data_file.seek(0)
             line = self.data_file.readline()
             current_row = -1
-            while line and current_row < start:
+            while line and current_row < start-1:
                 current_row += 1
                 line = self.data_file.readline()
 
-            while line and current_row <= end:
+            while line and current_row < end:
                 current_row = current_row + 1
                 start_index = 0
                 end_index = 0
@@ -138,3 +135,4 @@ class Adapter:
     ## Retrives the schema object of the adapter   
     def retrieve_schema(self):
         return self.schema
+

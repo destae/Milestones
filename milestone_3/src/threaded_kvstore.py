@@ -12,7 +12,7 @@ def node_one(shared_que: Queue):
     key_1_1 = Key("Key_1_1", 1)
     key_1_2 = Key("Key_1_2", 1)
 
-    adpater_1 = Adapter("")
+    adpater_1 = Adapter("../data/data.sor")
 
     dataframe_1 = Dataframe(adpater_1.create_dataframe(0, 10), adpater_1.retrieve_schema(), key_1_1, kv_store_1)
 
