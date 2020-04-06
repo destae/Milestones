@@ -2,6 +2,7 @@
 import socket
 from kv_store import *
 import sys
+import threading
 
 
 PRIMARY_ADDR = "127.0.0.2"
@@ -56,7 +57,7 @@ class Node:
                     self.connection_list.get(int(0))[1].send(message.encode())
                     break   
         self.sock.shutdown(socket.SHUT_RDWR)
-        self.sock.close()import threading
+        self.sock.close()
     
     # Receives a pending message from all the nodes
     def recieve_msg(self):
@@ -66,7 +67,7 @@ class Node:
                 if data:
                     print(data)
                     if data.contains('exit'):
-                        if k == 0
+                        if k == 0:
                             self.sock.shutdown(socket.SHUT_RDWR)
                             self.sock.close()
                         self.connection_list.get(k)[1].close()
