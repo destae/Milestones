@@ -8,7 +8,7 @@ from milestone_3.src.adapter import Schema
 class TestAdapter(unittest.TestCase):
 
     def setUp(self):
-        self.test_file_name = f"{os.getcwd()}/milestone_3/test/test_data.sor"
+        self.test_file_name = f"{os.getcwd()}/milestone_3/tests/test_data.sor"
         self.adapter = Adapter(name=self.test_file_name)
 
     def test_destermine_schema(self):
@@ -26,7 +26,7 @@ class TestAdapter(unittest.TestCase):
         self.assertEqual(nrows, self.adapter.nrows)
 
     def test_determine_number_of_rows2(self):
-        row_file = f"{os.getcwd()}/milestone_3/test/less_rows.sor"
+        row_file = f"{os.getcwd()}/milestone_3/tests/less_rows.sor"
         adapter = Adapter(name=row_file)
         self.assertEqual(5,adapter.nrows) # TODO This says 5 even though the last row is not complete... idk if this is okay???
     

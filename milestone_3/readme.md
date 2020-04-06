@@ -49,7 +49,12 @@ It includes:
     utils.py: Is a common library shared across the entire code base to reduce repetative code. It has some functions multiple parts of the system requires.
     
 
-### Building the Code
+## Building the Code
+
+Since our project is written in python, to run the code refer to the Makefile. When the project is started, the Makefile should be in the same directory as the milestone_3 folder. This way you only have to 'make run' and make test' to see the output.
+
+All the files in our project should have relative paths to the milestone_3 project. In Python each folder that has a file called '\_\_init\_\_.py' is considered a module. This means that files can import from other files in that module. Our entire project imports assuming that milestone_3 is a module, as well as the subfolders src and tests.
+
 
 
 ## Running the tests

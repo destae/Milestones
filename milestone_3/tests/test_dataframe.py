@@ -9,7 +9,7 @@ from milestone_3.src.kv_store import Key, KeyValueStore
 class TestDataframe(unittest.TestCase):
 
     def setUp(self):
-        self.test_file_name = f"{os.getcwd()}/milestone_2/test/test_data.sor"
+        self.test_file_name = f"{os.getcwd()}/milestone_3S/tests/test_data.sor"
         self.data = [['arriba', 2, 1, '2005-09-16', 55, 11, 7],
         ['pizza', 31490, 30, '2002-06-17', 30, 9, 6],
         ['chili', 112140, 130, '2005-02-25', 130, 6, 13],
