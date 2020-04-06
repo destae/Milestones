@@ -1,6 +1,6 @@
 """Node class that connects to primary and other nodes"""
 import socket
-from kv_store import *
+from milestone_4.src.kv_store import *
 import sys
 import threading
 
@@ -12,10 +12,10 @@ BUFFER_SIZE = 1024
 class Node:
     # Note the rendevous server should have a name = 0 because it is not part of the other client nodes
     def __init__(self, address, port, name: int, number_of_clients: int=10, rendevous: bool=False, rendevous_address=None, rendevous_port=None):
-        self.name = name1
+        self.name = name
         self.server_address = (address, port)
         self.sock = self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(server_address)
+        self.sock.bind(self.server_address)
         self.sock.settimeout(None)
         self.sock.listen(number_of_clients)
         self.connection_list = {} # this is a dictionary that contains address and ports key is the name
@@ -29,7 +29,7 @@ class Node:
                 sys.exit()
             else:
                 self.sock.connect((self.rendevous_address, self.rendevous_port)) # connecting to the rendevous node
-                self.connection_list.update(int(0) = [self.rendevous_address, None]) # appended the address, without a connection value, and the name = 0
+                self.connection_list.update(int(0),[self.rendevous_address, None]) # appended the address, without a connection value, and the name = 0
    
 
     # Accepts connections and update the connection list of the node
@@ -38,9 +38,9 @@ class Node:
         name = conn.recv(BUFFER_SIZE)
         name = name.decode()
         if name == '0':
-            self.connection_list.update(int(0) = [self.rendevous_address, conn]) # updates the rendevous value
+            self.connection_list.update(int(0),[self.rendevous_address, conn]) # updates the rendevous value
         else:
-            self.connection_list.update(int(name) = [addr, conn])
+            self.connection_list.update(int(name),[addr, conn])
 
     # Currently takes an input encodes it and sens it to the connection of choice
     def input_and_send(self):
@@ -88,5 +88,6 @@ class Node:
          
 
 if __name__ == "__main__":
-    n = Node(PRIMARY_ADDR, PRIMARY_PORT)
-    n.main()
+    n = Node(name="test",address=PRIMARY_ADDR, port=PRIMARY_PORT,
+            number_of_clients=3,rendevous_address="127.0.0.1",rendevous_port=8081)
+    n.run()

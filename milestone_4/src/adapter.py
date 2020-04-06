@@ -7,9 +7,9 @@
     # determine the schema
     # generate a dataframe
 
-from milestone_3.src import utils
-from milestone_3.src.dataframe import Dataframe
-from milestone_3.src.schema import Schema
+from milestone_4.src import utils
+from milestone_4.src.dataframe import Dataframe
+from milestone_4.src.schema import Schema
 
 class Adapter:
     def __init__(self, name):
