@@ -44,7 +44,6 @@ def string_to_list(data):
     return eval(data)
 
 
-
 def dataframe_decoder(df):
     if "schema" in df and "data" in df:
         sc_dict = df["schema"]
