@@ -21,6 +21,5 @@ def serialize_dataframe(df: Dataframe) -> str:
 
 
 def deserialize_dataframe(str_df) -> Dataframe:
-    from dataframe import *
     return json.loads(str_df, object_hook=json_helper)
 
