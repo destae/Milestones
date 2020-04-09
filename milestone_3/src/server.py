@@ -4,10 +4,7 @@ import threading
 import time
 
 s = socket.socket()
-host = socket.gethostname()
-print(" server will start on host : ", host)
-port = 8080
-s.bind((host,port))
+s.bind(("127.0.0.1", 8080))
 s.settimeout(None)
 name = input(str("Please enter your username: "))
 print("")
@@ -20,6 +17,10 @@ print("")
 s_name = conn.recv(1024)
 s_name = s_name.decode()
 print(s_name, "has joined the chat room")
+
+s.connect(("127.0.0.2", 8081))
+s.send(name.encode())
+
 
 def input_and_send():
    while 1:

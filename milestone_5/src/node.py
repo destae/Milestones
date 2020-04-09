@@ -1,6 +1,6 @@
 """Node class that connects to primary and other nodes"""
 import socket
-from milestone_5.src.kv_store import *
+from kv_store import *
 import sys
 import threading
 
@@ -11,7 +11,7 @@ BUFFER_SIZE = 1024
 
 class Node:
     # Note the rendevous server should have a name = 0 because it is not part of the other client nodes
-    def __init__(self, address, port, name: int, number_of_clients: int=10, rendevous: bool=False, rendevous_address=None, rendevous_port=None):
+    def __init__(self, address, port, name: int, number_of_clients: int=5, rendevous: bool=False, rendevous_address=None, rendevous_port=None):
         self.name = name
         self.server_address = (address, port)
         self.sock = self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
