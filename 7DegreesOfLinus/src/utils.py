@@ -1,7 +1,5 @@
 
 import json
-from dataframe import Dataframe
-from schema import Schema
 
 ## Determines the type of a single data point
 def determine_type_with_index(data, start_index, end_index):
@@ -51,10 +49,12 @@ def dataframe_decoder(df):
 
 
 def serialize_dataframe(df: Dataframe) -> str:
+    from dataframe import *
     df_dict = vars(df)
     df_dict['schema'] = vars(df.schema)
     print(df_dict)
     return json.dumps(df_dict)
 
 def deserialize_dataframe(str_df) -> Dataframe:
-  return json.loads(str_df, object_hook=dataframe_decoder)
+    from dataframe import *
+    return json.loads(str_df, object_hook=dataframe_decoder)
