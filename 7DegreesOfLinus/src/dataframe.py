@@ -1,8 +1,8 @@
 import os
-from milestone_5.src import utils
-from milestone_5.src.kv_store import Key
-from milestone_5.src.kv_store import KeyValueStore
-from milestone_5.src.schema import Schema
+import utils
+from kv_store import Key
+from kv_store import KeyValueStore
+from schema import Schema
 
 class Dataframe:
     ## Initialises the dataframe. Creates a key value pair and inserts it into the Key Value Store

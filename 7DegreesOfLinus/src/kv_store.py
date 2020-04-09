@@ -33,21 +33,15 @@ class KeyValueStore:
     If the key value store home node does not align with the home node of the store, it sends a request to the right key value store to add the pair.
     '''
     def add_key_value(self, key: Key, value):
-        # if key.get_home() == self.home_node:
         self.key_store.update({key.get_name(), value})
-        # else:
-        #     self.send_msg(str(key.get_home()) + ":addkv|" + key.get_name() + "|" + value.dataframe_to_string())
 
     '''
     Removes the specified key from the store. 
     If the home node of the key does not match this node, a request is sent to the home node to remove the key in question.
     '''
     def remove_key_value(self, key: Key):
-        # if key.get_home() == self.home_node:
         self.key_store.pop(key.get_name())
-        # else:
-        #     self.send_msg(str(key.get_home()) + ":rmkv|" + key.get_name())
-    
+
     '''
     Updates the home node of this key value store
     '''
@@ -59,10 +53,7 @@ class KeyValueStore:
     If the given Key's home node is not this node, the system sends a message to the home node of the key to retrieve the value
     '''
     def get_value(self, key: Key):
-        # if key.get_home() == self.home_node:
         return self.key_store.get(key.get_name())
-        # else:
-        #     self.send_msg(str(key.get_home()) + ":getkv|" + key.get_name())
 
 
     def wait_and_get(self, key: Key):

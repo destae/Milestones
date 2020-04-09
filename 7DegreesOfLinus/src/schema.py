@@ -1,6 +1,5 @@
 import os
 
-
 class Schema:
     ## Creates a schema object: main constructor
     def __init__(self, sch: list, ncols: int=0,nrows: int=0):

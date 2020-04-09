@@ -36,25 +36,3 @@ def determine_type(data):
 ## Removes the whitespace of a given data point
 def remove_whitespace(data):
     return data.strip()
-
-
-def dataframe_decoder(df):
-    from dataframe import *
-    from schema import *
-    if "schema" in df and "data" in df:
-        sc_dict = df["schema"]
-        sc = Schema(sch=sc_dict["schema_list"],nrows=sc_dict["nrows"],ncols=sc_dict["ncols"])
-        return Dataframe(data=df["data"],sch=sc)
-    return df
-
-
-def serialize_dataframe(df) -> str:
-    from dataframe import *
-    df_dict = vars(df)
-    df_dict['schema'] = vars(df.schema)
-    print(df_dict)
-    return json.dumps(df_dict)
-
-def deserialize_dataframe(str_df) -> Dataframe:
-    from dataframe import *
-    return json.loads(str_df, object_hook=dataframe_decoder)

@@ -17,12 +17,10 @@ class Server:
         self.server_socket.listen(MAX_CLIENTS)
         self.sockets_list = [self.server_socket]
         self.clients = {}
-
-    print(f'Listening for connections on {IP}:{PORT}...')
+        print(f'Listening for connections on {IP}:{PORT}...')
 
     # Handles message receiving
     def receive_message(self, client_socket):
-
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
             if not len(message_header):
@@ -71,15 +69,9 @@ class Server:
 
                     for client_socket in self.clients:
                         if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
-                            if client_socket != notified_socket:
-                                client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+                            client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
 
             for notified_socket in exception_sockets:
 
                 self.sockets_list.remove(notified_socket)
                 del self.clients[notified_socket]
-
-
-if __name__ == "__main__":
-    n = Server()
-    n.run()

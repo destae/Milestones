@@ -4,7 +4,6 @@ import json
 from dataframe import Dataframe
 from schema import Schema
 
-
 def json_helper(df):
     if "schema" in df and "data" in df:
         sc_dict = df["schema"]
@@ -12,15 +11,12 @@ def json_helper(df):
         return Dataframe(data=df["data"],sch=sc)
     return df
 
-
 def serialize_dataframe(df: Dataframe) -> str:
     df_dict = vars(df)
     df_dict['schema'] = vars(df.schema)
     print(df_dict)
     return json.dumps(df_dict)
 
-
 def deserialize_dataframe(str_df) -> Dataframe:
-    from dataframe import *
     return json.loads(str_df, object_hook=json_helper)
 

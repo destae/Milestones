@@ -3,6 +3,7 @@ import select
 import errno
 from threading import Thread
 from kv_store import *
+from serialize import *
 
 
 HEADER_LENGTH = 10
@@ -12,16 +13,18 @@ PORT = 1234
 
 class Client:
     def __init__(self, node_name: int, kv: KeyValueStore):
-        self.my_username = node_name
+        self.home_node = node_name
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((IP, PORT))
         self.client_socket.setblocking(False)
-        self.username = self.my_username.encode('utf-8')
+        self.username = self.home_node.encode('utf-8')
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')
         self.client_socket.send(self.username_header + self.username)
         self.read_thread = Thread(target=self.read)
         self.read_thread.start()
         self.store = kv
+        self.tmp_dataframe = None
+
 
     def send(self, node_number, msg):
             message = str(node_number) + ":" + msg
@@ -54,9 +57,24 @@ class Client:
 
                     msg = message.split("|")
                     if (msg[0] == 'addkv'):
-                        d = Dataframe(, sch: Schema, key: Key=None, kv: KeyValueStore=None)
+                        k = Key(msg[1], self.home_node)         # key
+                        d = deserialize_dataframe(msg[2])       # dataframe
+                        self.store.add_key_value(k, d)          # adding key value to the store
 
-                        key.get_name() + "|" + value.dataframe_to_string())
+                    elif (msg[0] == 'rmkv'):
+                        k = Key(msg[1], self.home_node)         # key
+                        self.store.remove_key_value(k)          # removing key from store
+
+                    elif (msg[0] == 'getkv'):
+                        k = Key(msg[1], self.home_node)         # key
+                        d = self.store.get_value(k)             # dataframe
+
+                        data = "datakv|" + serialize_dataframe(d) 
+                        self.send(int(msg[2]), data)
+
+                    elif (msg[0] == "datakv"):
+                        self.tmp_dataframe = deserialize_dataframe(msg[1])      # dataframe
+
                     print(f'{self.username} > {message}')
 
             except IOError as e:
