@@ -48,7 +48,7 @@ def dataframe_decoder(df):
     return df
 
 
-def serialize_dataframe(df: Dataframe) -> str:
+def serialize_dataframe(df) -> str:
     from dataframe import *
     df_dict = vars(df)
     df_dict['schema'] = vars(df.schema)
