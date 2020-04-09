@@ -5,7 +5,7 @@ from dataframe import Dataframe
 from schema import Schema
 
 
-def dataframe_decoder(df):
+def json_helper(df):
     if "schema" in df and "data" in df:
         sc_dict = df["schema"]
         sc = Schema(sch=sc_dict["schema_list"],nrows=sc_dict["nrows"],ncols=sc_dict["ncols"])
@@ -19,7 +19,8 @@ def serialize_dataframe(df: Dataframe) -> str:
     print(df_dict)
     return json.dumps(df_dict)
 
+
 def deserialize_dataframe(str_df) -> Dataframe:
     from dataframe import *
-    return json.loads(str_df, object_hook=dataframe_decoder)
+    return json.loads(str_df, object_hook=json_helper)
 
