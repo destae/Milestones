@@ -39,13 +39,10 @@ def determine_type(data):
 def remove_whitespace(data):
     return data.strip()
 
-## Changes a string to a lsit
-def string_to_list(data):
-    return eval(data)
-
-
 
 def dataframe_decoder(df):
+    from dataframe import *
+    from schema import *
     if "schema" in df and "data" in df:
         sc_dict = df["schema"]
         sc = Schema(sch=sc_dict["schema_list"],nrows=sc_dict["nrows"],ncols=sc_dict["ncols"])
