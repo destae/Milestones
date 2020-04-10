@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
 
 
 class Ui_MainWindow(object):
@@ -276,3 +277,11 @@ class Ui_MainWindow(object):
         self.sublogo.setText(_translate("MainWindow", "Client Application"))
         self.removeKeyValue.setText(_translate("MainWindow", "Remove Key Value"))
         self.getKeyValue.setText(_translate("MainWindow", "Get Key Value"))
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
