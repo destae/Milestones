@@ -2,7 +2,6 @@ import socket
 import select
 
 HEADER_LENGTH = 10
-MAX_CLIENTS = 10
 
 
 IP = "127.0.0.2"
@@ -14,13 +13,14 @@ class Server:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_socket.bind((IP, PORT))
-        self.server_socket.listen(MAX_CLIENTS)
+        self.server_socket.listen()
         self.sockets_list = [self.server_socket]
         self.clients = {}
         print(f'Listening for connections on {IP}:{PORT}...')
 
     # Handles message receiving
     def receive_message(self, client_socket):
+
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
             if not len(message_header):
@@ -32,10 +32,20 @@ class Server:
         except:
             return False
 
+    def send(self, message: str):
+        msg = (message["data"].decode("utf-8")).split(":")
+        for client_socket in self.clients:
+            if (msg[0] == "0"):
+                client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+            else:
+                if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
+                    if client_socket != notified_socket:
+                        client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+
+
     def run(self):
         while True:
             read_sockets, _, exception_sockets = select.select(self.sockets_list, [], self.sockets_list)
-
 
             for notified_socket in read_sockets:
 
@@ -65,12 +75,9 @@ class Server:
                     user = self.clients[notified_socket]
 
                     print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
-                    msg = (message["data"].decode("utf-8")).split(":")
 
-                    for client_socket in self.clients:
-                        if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
-                            client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
-
+                    self.send(message)
+                    
             for notified_socket in exception_sockets:
 
                 self.sockets_list.remove(notified_socket)

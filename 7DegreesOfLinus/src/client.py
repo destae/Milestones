@@ -17,7 +17,7 @@ class Client:
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((IP, PORT))
         self.client_socket.setblocking(False)
-        self.username = self.home_node.encode('utf-8')
+        self.username = str(self.home_node).encode('utf-8')
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')
         self.client_socket.send(self.username_header + self.username)
         self.read_thread = Thread(target=self.read)
@@ -26,7 +26,7 @@ class Client:
         self.tmp_dataframe = None
 
 
-    def send(self, node_number, msg):
+    def send(self, node_number: int, msg: str):
             message = str(node_number) + ":" + msg
             # If message is not empty - send it
             if message:
@@ -87,3 +87,6 @@ class Client:
             except Exception as e:
                 print('Reading error: '.format(str(e)))
                 sys.exit()
+
+if __name__ == '__main__':
+    n = Client(1, KeyValueStore(1))
