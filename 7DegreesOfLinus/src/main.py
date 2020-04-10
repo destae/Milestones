@@ -5,14 +5,20 @@ from threading import Thread
 from mainUI import *
 
 class MainApplication:
-    def __init__(self, file_name: str):
-        adpt = Adapter(file_name)
-        self.s = Server()
-        print(adpt.longest_column)
-        print(adpt.nrows)
+    def __init__(self):
+        app = QtWidgets.QApplication(sys.argv)
+        self.MainWindow = QtWidgets.QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.MainWindow)
+        self.MainWindow.show()
+        sys.exit(app.exec_())
+        # adpt = Adapter(file_name)
+        # self.s = Server()
+        # print(adpt.longest_column)
+        # print(adpt.nrows)
 
-        self.server_thread = Thread(target=self.start_server)
-        self.server_thread.start()
+        # self.server_thread = Thread(target=self.start_server)
+        # self.server_thread.start()
         
         print("HEY HEY")
 
@@ -20,9 +26,5 @@ class MainApplication:
         self.s.run()
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    MainApplication()
+    

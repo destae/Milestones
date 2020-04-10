@@ -1,5 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QPushButton
+
 
 
 class Ui_MainWindow(object):
@@ -40,8 +42,11 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.selectFile.setObjectName("selectFile")
+        self.selectFile.clicked.connect(self.fileSelect)
         self.generate = QtWidgets.QPushButton(self.centralwidget)
         self.generate.setGeometry(QtCore.QRect(660, 120, 171, 61))
+        self.generate.clicked.connect(self.generateDataframe)
+
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
@@ -321,6 +326,20 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def retrieveFileName(self):
+        return self.filePath
+
+    def generateDataframe(self):
+        current_adapter = Adapter(self.retrieveFileName())
+        current_dataframe = current_adapter.retrieve_dataframe()
+        self.generatedDataframe.setText(current_dataframe.dataframe_to_string())
+
+    def fileSelect(self):
+        self.filePath = QFileDialog.getOpenFileName()
+        # self.filePath = QFileDialog.getOpenFileName()[0]
+        # self.fileName.setText(self.filePath)
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -363,3 +382,5 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.logo.setText(_translate("MainWindow", "EAU2"))
         self.sublogo.setText(_translate("MainWindow", "Main Application"))
+
+
