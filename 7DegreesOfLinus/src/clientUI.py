@@ -1,11 +1,11 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(625, 624)
+        MainWindow.resize(615, 624)
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         MainWindow.setFont(font)
@@ -235,6 +235,16 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.getKeyValue.setObjectName("getKeyValue")
+        self.nodeID = QtWidgets.QLCDNumber(self.centralwidget)
+        self.nodeID.setGeometry(QtCore.QRect(400, 20, 201, 41))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nodeID.setFont(font)
+        self.nodeID.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.nodeID.setDigitCount(10)
+        self.nodeID.setObjectName("nodeID")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -277,6 +287,7 @@ class Ui_MainWindow(object):
         self.sublogo.setText(_translate("MainWindow", "Client Application"))
         self.removeKeyValue.setText(_translate("MainWindow", "Remove Key Value"))
         self.getKeyValue.setText(_translate("MainWindow", "Get Key Value"))
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
