@@ -2,6 +2,7 @@
 from server import *
 from adapter import*
 from threading import Thread
+from mainUI import *
 
 class MainApplication:
     def __init__(self, file_name: str):
@@ -19,4 +20,9 @@ class MainApplication:
         self.s.run()
 
 if __name__ == "__main__":
-    MainApplication("/home/eden/Desktop/Milestones/7DegreesOfLinus/data/data.sor")
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

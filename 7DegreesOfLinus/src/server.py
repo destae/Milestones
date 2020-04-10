@@ -57,9 +57,7 @@ class Server:
                         continue
 
                     self.sockets_list.append(client_socket)
-
                     self.clients[client_socket] = user
-
                     print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
 
                 else:
