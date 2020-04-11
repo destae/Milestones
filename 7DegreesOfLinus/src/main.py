@@ -4,21 +4,26 @@ from adapter import*
 from threading import Thread
 from mainUI import *
 
+
 class MainApplication:
-    def __init__(self):
+    def __init__(self, file_name):
+        self.adpt = Adapter(file_name)
+        self.s = Server()
+        self.server_thread = Thread(target=self.start_server)
+        self.server_thread.start()
+
+
         app = QtWidgets.QApplication(sys.argv)
         self.MainWindow = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.MainWindow)
         self.MainWindow.show()
         sys.exit(app.exec_())
-        # adpt = Adapter(file_name)
-        # self.s = Server()
-        # print(adpt.longest_column)
-        # print(adpt.nrows)
-
-        # self.server_thread = Thread(target=self.start_server)
-        # self.server_thread.start()
+        
+    
+        
+        self.server_thread = Thread(target=self.start_server)
+        self.server_thread.start()
         
         print("HEY HEY")
 
@@ -26,5 +31,5 @@ class MainApplication:
         self.s.run()
 
 if __name__ == "__main__":
-    MainApplication()
+    MainApplication("/home/eden/Desktop/Milestones/7DegreesOfLinus/data/data.sor")
     

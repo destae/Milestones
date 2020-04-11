@@ -1,10 +1,11 @@
 import socket
 import select
+from queue import *
 
 HEADER_LENGTH = 10
 
 
-IP = "127.0.0.2"
+IP = "127.0.0.3"
 PORT = 1234
 
 
@@ -31,19 +32,24 @@ class Server:
 
         except:
             return False
+    
+    def get_clients(self):
+        return self.clients
 
     def send(self, message: str):
-        msg = (message["data"].decode("utf-8")).split(":")
+        msg = message.split(":")
         for client_socket in self.clients:
-            if (msg[0] == "0"):
-                client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+            if msg[0] == "0":
+                client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
             else:
+                print ("I AM WHERE I NEED TO BE")
                 if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
-                    if client_socket != notified_socket:
-                        client_socket.send(user['header'] + user['data'] + f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+                    print ("YEP THIS IS IT ")
+                    client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
+                    print(msg[1])
+                    print(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
 
-
-    def run(self):
+    def run(self, shared_que: Queue):
         while True:
             read_sockets, _, exception_sockets = select.select(self.sockets_list, [], self.sockets_list)
 
@@ -59,11 +65,13 @@ class Server:
                     self.sockets_list.append(client_socket)
                     self.clients[client_socket] = user
                     print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
-
+                    shared_que.put(('add', user['data'].decode('utf-8'), client_address[1]), block=True, timeout=None)
+                    
                 else:
                     message = self.receive_message(notified_socket)
                     if message is False:
                         print('Closed connection from: {}'.format(self.clients[notified_socket]['data'].decode('utf-8')))
+                        shared_que.put(('remove', user['data'].decode('utf-8')), block=True, timeout=None)
 
                         self.sockets_list.remove(notified_socket)
                         del self.clients[notified_socket]
@@ -80,3 +88,8 @@ class Server:
 
                 self.sockets_list.remove(notified_socket)
                 del self.clients[notified_socket]
+
+# if __name__ == "__main__":
+#     q = Queue()
+#     s = Server()
+#     s.run(q)

@@ -14,9 +14,7 @@ def json_helper(df):
 def serialize_dataframe(df: Dataframe) -> str:
     df_dict = vars(df)
     df_dict['schema'] = vars(df.schema)
-    print(df_dict)
     return json.dumps(df_dict)
 
 def deserialize_dataframe(str_df) -> Dataframe:
     return json.loads(str_df, object_hook=json_helper)
-

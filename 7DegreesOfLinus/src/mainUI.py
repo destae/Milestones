@@ -1,13 +1,71 @@
-import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QPushButton
+import sys, os, csv
+from PyQt5.QtWidgets import *
+from PyQt5 import *
+
+from server import *
+from adapter import*
+from threading import Thread
+from mainUI import *
+import time
+from queue import *
+from kv_store import *
+from serialize import *
+
+class Ui_MainWindow(object):    
+    def __init__(self, file_name):
+        self.shared_queue = Queue()
+        self.adpt = Adapter(file_name)
+        self.s = Server()
+        self.server_thread = Thread(target=self.start_server)
+        self.server_thread.start()
+
+        self.nodes_thread = Thread(target=self.update_nodes)
+        self.nodes_thread.start()
+
+        # self.server_thread.join()
+        # self.nodes_thread.join()
+
+    def update_nodes(self):
+        while True:
+                data = self.shared_queue.get(block=True, timeout=None)
+                if (data[0] == 'add'):
+                        tempItem = QtWidgets.QTreeWidgetItem()
+                        tempItem.setText(0, str(data[1]))
+                        tempItem.setText(1, str(data[2]))
+                        self.treeSelectedData.insertTopLevelItem(0, tempItem)
+                elif (data[0] == 'remove'):                
+                        root = self.treeSelectedData.invisibleRootItem()
+                        for i in range(root.childCount()):
+                                if (root.child(i)).text(0) == data[1]:
+                                        item = self.treeSelectedData.takeTopLevelItem(i)
+                                        del item
+                                        
+    def add_key_value(self):
+            if not(self.textEditHome.toPlainText() == "" or self.textEditStart.toPlainText() == "" or self.textEditEnd.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
+                    if self.tree_contains(self.textEditHome.toPlainText()):
+                            d = Dataframe(self.adpt.create_dataframe(int(self.textEditStart.toPlainText()), int(self.textEditEnd.toPlainText())), self.adpt.retrieve_schema())
+                            self.DataframeField.setText(str(d.dataframe_to_string()))
+                            msg = str(self.textEditHome.toPlainText()) + ":addkv|" + str(self.textEditHome.toPlainText()) + "|" + serialize_dataframe(d)
+                            self.textEditEnd.setText("")
+                            self.textEditHome.setText("")
+                            self.textEditStart.setText("")
+                            self.textEditKey.setText("")
+                            self.s.send(msg)
+
+    def tree_contains(self, home_node: str):
+            root = self.treeSelectedData.invisibleRootItem()
+            for i in range(root.childCount()):
+                    if(root.child(i).text(0) == home_node):
+                            return True
+            return False
+
+    def start_server(self):
+        self.s.run(self.shared_queue)
 
 
-
-class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(847, 574)
+        MainWindow.resize(847, 563)
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         MainWindow.setFont(font)
@@ -16,81 +74,8 @@ class Ui_MainWindow(object):
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.selectFile = QtWidgets.QPushButton(self.centralwidget)
-        self.selectFile.setGeometry(QtCore.QRect(660, 190, 171, 61))
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.selectFile.setFont(font)
-        self.selectFile.setStyleSheet("QPushButton {\n"
-"    background-color: rgb(238, 238, 236);\n"
-"      border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 10px;\n"
-"    border-color: rgb(0, 0, 0);\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(211, 215, 207);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    color: rgb(238, 238, 236);\n"
-"}")
-        self.selectFile.setObjectName("selectFile")
-        self.selectFile.clicked.connect(self.fileSelect)
-        self.generate = QtWidgets.QPushButton(self.centralwidget)
-        self.generate.setGeometry(QtCore.QRect(660, 120, 171, 61))
-        self.generate.clicked.connect(self.generateDataframe)
-
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.generate.setFont(font)
-        self.generate.setStyleSheet("QPushButton {\n"
-"    background-color: rgb(238, 238, 236);\n"
-"      border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 10px;\n"
-"    border-color: rgb(0, 0, 0);\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(211, 215, 207);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    color: rgb(238, 238, 236);\n"
-"}")
-        self.generate.setObjectName("generate")
-        self.fileName = QtWidgets.QTextBrowser(self.centralwidget)
-        self.fileName.setEnabled(True)
-        self.fileName.setGeometry(QtCore.QRect(600, 20, 231, 91))
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        font.setPointSize(12)
-        self.fileName.setFont(font)
-        self.fileName.setStyleSheet("QTextBrowser#fileName {\n"
-"    background-color: rgb(238, 238, 236);\n"
-"      border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 10px;\n"
-"    border-color: rgb(0, 0, 0);\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
-"")
-        self.fileName.setPlaceholderText("")
-        self.fileName.setObjectName("fileName")
         self.treeGroupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.treeGroupBox.setGeometry(QtCore.QRect(410, 270, 421, 291))
+        self.treeGroupBox.setGeometry(QtCore.QRect(410, 150, 421, 401))
         self.treeGroupBox.setStyleSheet("QGroupBox {\n"
 "    background-color: rgb(238, 238, 236);\n"
 "      border-style: outset;\n"
@@ -153,7 +138,7 @@ class Ui_MainWindow(object):
         self.treeSelectedData.header().setDefaultSectionSize(200)
         self.treeSelectedData.header().setMinimumSectionSize(70)
         self.textEditHome = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEditHome.setGeometry(QtCore.QRect(10, 170, 120, 35))
+        self.textEditHome.setGeometry(QtCore.QRect(10, 160, 120, 35))
         font = QtGui.QFont()
         font.setFamily("Tlwg Mono")
         font.setPointSize(12)
@@ -172,7 +157,7 @@ class Ui_MainWindow(object):
         self.textEditHome.setPlaceholderText("")
         self.textEditHome.setObjectName("textEditHome")
         self.homeLabel = QtWidgets.QLabel(self.centralwidget)
-        self.homeLabel.setGeometry(QtCore.QRect(20, 150, 91, 17))
+        self.homeLabel.setGeometry(QtCore.QRect(20, 140, 91, 17))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -181,7 +166,7 @@ class Ui_MainWindow(object):
         self.homeLabel.setObjectName("homeLabel")
         self.DataframeField = QtWidgets.QTextBrowser(self.centralwidget)
         self.DataframeField.setEnabled(True)
-        self.DataframeField.setGeometry(QtCore.QRect(10, 280, 381, 211))
+        self.DataframeField.setGeometry(QtCore.QRect(10, 270, 381, 211))
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
@@ -198,7 +183,7 @@ class Ui_MainWindow(object):
         self.DataframeField.setPlaceholderText("")
         self.DataframeField.setObjectName("DataframeField")
         self.addKeyValue = QtWidgets.QPushButton(self.centralwidget)
-        self.addKeyValue.setGeometry(QtCore.QRect(100, 500, 171, 61))
+        self.addKeyValue.setGeometry(QtCore.QRect(100, 490, 171, 61))
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
@@ -223,8 +208,9 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.addKeyValue.setObjectName("addKeyValue")
+        self.addKeyValue.clicked.connect(self.add_key_value)
         self.textEditKey = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEditKey.setGeometry(QtCore.QRect(10, 230, 381, 35))
+        self.textEditKey.setGeometry(QtCore.QRect(10, 220, 381, 35))
         font = QtGui.QFont()
         font.setFamily("Tlwg Mono")
         font.setPointSize(12)
@@ -243,7 +229,7 @@ class Ui_MainWindow(object):
         self.textEditKey.setPlaceholderText("")
         self.textEditKey.setObjectName("textEditKey")
         self.keyLabel = QtWidgets.QLabel(self.centralwidget)
-        self.keyLabel.setGeometry(QtCore.QRect(10, 210, 81, 17))
+        self.keyLabel.setGeometry(QtCore.QRect(10, 200, 81, 17))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -251,7 +237,7 @@ class Ui_MainWindow(object):
         self.keyLabel.setFont(font)
         self.keyLabel.setObjectName("keyLabel")
         self.StartLabel = QtWidgets.QLabel(self.centralwidget)
-        self.StartLabel.setGeometry(QtCore.QRect(150, 150, 101, 17))
+        self.StartLabel.setGeometry(QtCore.QRect(150, 140, 101, 17))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -259,7 +245,7 @@ class Ui_MainWindow(object):
         self.StartLabel.setFont(font)
         self.StartLabel.setObjectName("StartLabel")
         self.endLabel = QtWidgets.QLabel(self.centralwidget)
-        self.endLabel.setGeometry(QtCore.QRect(290, 150, 81, 17))
+        self.endLabel.setGeometry(QtCore.QRect(290, 140, 81, 17))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -267,7 +253,7 @@ class Ui_MainWindow(object):
         self.endLabel.setFont(font)
         self.endLabel.setObjectName("endLabel")
         self.textEditEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEditEnd.setGeometry(QtCore.QRect(270, 170, 120, 35))
+        self.textEditEnd.setGeometry(QtCore.QRect(270, 160, 120, 35))
         font = QtGui.QFont()
         font.setFamily("Tlwg Mono")
         font.setPointSize(12)
@@ -286,7 +272,7 @@ class Ui_MainWindow(object):
         self.textEditEnd.setPlaceholderText("")
         self.textEditEnd.setObjectName("textEditEnd")
         self.textEditStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEditStart.setGeometry(QtCore.QRect(140, 170, 120, 35))
+        self.textEditStart.setGeometry(QtCore.QRect(140, 160, 120, 35))
         font = QtGui.QFont()
         font.setFamily("Tlwg Mono")
         font.setPointSize(12)
@@ -305,7 +291,7 @@ class Ui_MainWindow(object):
         self.textEditStart.setPlaceholderText("")
         self.textEditStart.setObjectName("textEditStart")
         self.logo = QtWidgets.QLabel(self.centralwidget)
-        self.logo.setGeometry(QtCore.QRect(220, 20, 351, 91))
+        self.logo.setGeometry(QtCore.QRect(240, 20, 351, 91))
         font = QtGui.QFont()
         font.setPointSize(100)
         font.setBold(True)
@@ -314,7 +300,7 @@ class Ui_MainWindow(object):
         self.logo.setFont(font)
         self.logo.setObjectName("logo")
         self.sublogo = QtWidgets.QLabel(self.centralwidget)
-        self.sublogo.setGeometry(QtCore.QRect(290, 100, 201, 31))
+        self.sublogo.setGeometry(QtCore.QRect(310, 100, 201, 31))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
@@ -326,30 +312,9 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retrieveFileName(self):
-        return self.filePath
-
-    def generateDataframe(self):
-        current_adapter = Adapter(self.retrieveFileName())
-        current_dataframe = current_adapter.retrieve_dataframe()
-        self.generatedDataframe.setText(current_dataframe.dataframe_to_string())
-
-    def fileSelect(self):
-        self.filePath = QFileDialog.getOpenFileName()
-        # self.filePath = QFileDialog.getOpenFileName()[0]
-        # self.fileName.setText(self.filePath)
-
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.selectFile.setText(_translate("MainWindow", "Select File"))
-        self.generate.setText(_translate("MainWindow", "Generate"))
-        self.fileName.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Tlwg Typewriter\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; -qt-user-state:65536; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p></body></html>"))
         self.textEditHome.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -383,4 +348,11 @@ class Ui_MainWindow(object):
         self.logo.setText(_translate("MainWindow", "EAU2"))
         self.sublogo.setText(_translate("MainWindow", "Main Application"))
 
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow("/home/eden/Desktop/Milestones/7DegreesOfLinus/data/data.sor")
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
 

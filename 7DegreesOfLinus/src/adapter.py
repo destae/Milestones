@@ -97,15 +97,16 @@ class Adapter:
         if end < start or start < 0 or end < 0 or end > self.nrows-1:
             print("Error: Invalid start and end lines.")
         else:
-            data = [['' for x in range(self.longest_column)] for y in range(end-start+1)]
+            data = [['' for x in range(self.longest_column)] for y in range(end+2-start)]
             self.data_file.seek(0)
             line = self.data_file.readline()
             current_row = -1
-            while line and current_row < start-1:
-                current_row += 1
+            line_num = -1
+            while line and line_num < start-1:
+                line_num += 1
                 line = self.data_file.readline()
 
-            while line and current_row < end:
+            while line and current_row < (end+1-start):
                 current_row = current_row + 1
                 start_index = 0
                 end_index = 0
@@ -115,10 +116,10 @@ class Adapter:
                         start_index = i+1
                         while line[i] != '>':
                             i = i+1
-                        if line[i] == '>':
-                            end_index = i
-                            current_column += 1
-                            data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
+                            if line[i] == '>':
+                                end_index = i
+                                current_column += 1
+                                data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
                 line = self.data_file.readline()
             return data
 
@@ -135,4 +136,3 @@ class Adapter:
     ## Retrives the schema object of the adapter   
     def retrieve_schema(self):
         return self.schema
-

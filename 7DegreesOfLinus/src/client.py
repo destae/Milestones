@@ -4,11 +4,12 @@ import errno
 from threading import Thread
 from kv_store import *
 from serialize import *
+from dataframe import *
 
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.2"
+IP = "127.0.0.3"
 PORT = 1234
 
 class Client:
@@ -54,7 +55,8 @@ class Client:
                     message_header = self.client_socket.recv(HEADER_LENGTH)
                     message_length = int(message_header.decode('utf-8').strip())
                     message = self.client_socket.recv(message_length).decode('utf-8')
-
+                    print("In the client")
+                    print(message)
                     msg = message.split("|")
                     if (msg[0] == 'addkv'):
                         k = Key(msg[1], self.home_node)         # key
@@ -89,4 +91,4 @@ class Client:
                 sys.exit()
 
 if __name__ == '__main__':
-    n = Client(1, KeyValueStore(1))
+    n = Client(2, KeyValueStore(2))
