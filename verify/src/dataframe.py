@@ -12,20 +12,20 @@ class Dataframe:
         self.nrows = sch.get_nrows()
         self.data = data
         if kv and key:
-            kv.add_key_value(key, self.serialize_dataframe())
+            kv.add_key_value(key, self.serialize())
         
     
     #Constructor that creates a new Dataframe from an array
     @classmethod
     def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list, arr_type: str='B'):
         schem = Schema([arr_type], ncols=1, nrows=size)
-        return cls([array], schem,key=key,kv=kv)
+        return Dataframe(data=[array], sch=schem,key=key,kv=kv)
     
     #Constructor that creates a new Dataframe with a single entry: a scalar value
     @classmethod
     def from_scalar(cls, key: Key, kv: KeyValueStore, scalar: int, scalar_type: str='B'):
         schem = Schema([scalar_type], ncols=1, nrows=1)
-        return cls([[scalar]], schem,key=key,kv=kv)
+        return Dataframe([[scalar]], schem,key=key,kv=kv)
 
     ## Retrieves the number of rows of the dataframe
     def get_nrows(self):
@@ -54,10 +54,11 @@ class Dataframe:
         return tmp_string
 
     # Returns a string representation of this dataframe in json form.
-    def serialize_dataframe(self) -> str:
+    def serialize(self) -> str:
         df_dict = vars(self)
-        df_dict['schema'] = vars(self.schema)
-        return json.dumps(df_dict)
+        temp_dict = df_dict.copy()
+        temp_dict['schema'] = vars(self.schema)
+        return json.dumps(temp_dict)
     
     @classmethod
     def from_json(cls, str_df):
