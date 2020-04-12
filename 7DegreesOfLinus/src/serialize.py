@@ -1,8 +1,9 @@
 """ Class that serializes other classes"""
 
 import json
-from dataframe import Dataframe
-from schema import Schema
+from dataframe import *
+from schema import *
+from adapter import *
 
 def json_helper(df):
     if "schema" in df and "data" in df:
@@ -18,3 +19,4 @@ def serialize_dataframe(df: Dataframe) -> str:
 
 def deserialize_dataframe(str_df) -> Dataframe:
     return json.loads(str_df, object_hook=json_helper)
+

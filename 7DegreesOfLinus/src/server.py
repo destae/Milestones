@@ -3,11 +3,8 @@ import select
 from queue import *
 
 HEADER_LENGTH = 10
-
-
-IP = "127.0.0.3"
+IP = "127.0.0.12"
 PORT = 1234
-
 
 class Server:
     def __init__(self):
@@ -37,16 +34,13 @@ class Server:
         return self.clients
 
     def send(self, message: str):
-        msg = message.split(":")
+        msg = message.split("~")
         for client_socket in self.clients:
             if msg[0] == "0":
                 client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
             else:
-                print ("I AM WHERE I NEED TO BE")
                 if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
-                    print ("YEP THIS IS IT ")
                     client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
-                    print(msg[1])
                     print(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
 
     def run(self, shared_que: Queue):

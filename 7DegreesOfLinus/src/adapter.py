@@ -19,10 +19,10 @@ class Adapter:
         self.find_longest_column() ## determines the longest row in the entire file (might need to change, but who knows TODO)
         self.sch = [None] * self.longest_column
         self.determine_schema() ## determines an array of values that represents part of the schema
-        self.schema = Schema(self.sch) ## creates a schema object
         self.nrows = 0
         self.determine_number_of_rows() ## determines the number of total lines in the file
-
+        self.schema = Schema(self.sch, self.longest_column, self.nrows) ## creates a schema object
+        
     ## Opens the file
     def file_open(self):
         self.data_file = open(self.file_name, 'r')

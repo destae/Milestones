@@ -5,8 +5,6 @@ from PyQt5 import *
 from server import *
 from adapter import*
 from threading import Thread
-from mainUI import *
-import time
 from queue import *
 from kv_store import *
 from serialize import *
@@ -45,7 +43,7 @@ class Ui_MainWindow(object):
                     if self.tree_contains(self.textEditHome.toPlainText()):
                             d = Dataframe(self.adpt.create_dataframe(int(self.textEditStart.toPlainText()), int(self.textEditEnd.toPlainText())), self.adpt.retrieve_schema())
                             self.DataframeField.setText(str(d.dataframe_to_string()))
-                            msg = str(self.textEditHome.toPlainText()) + ":addkv|" + str(self.textEditHome.toPlainText()) + "|" + serialize_dataframe(d)
+                            msg = str(self.textEditHome.toPlainText()) + "~addkv|" + str(self.textEditHome.toPlainText()) + "|" + str(serialize_dataframe(d))
                             self.textEditEnd.setText("")
                             self.textEditHome.setText("")
                             self.textEditStart.setText("")

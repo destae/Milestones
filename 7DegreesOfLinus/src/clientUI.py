@@ -1,8 +1,48 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import *
+from client import *
+from threading import Thread
+from queue import *
+from kv_store import *
+from serialize import *
 
 class Ui_MainWindow(object):
+    def __init__(self, node_number: int):
+        self.node_number = node_number
+        print("HER HER")
+        # self.c = Client(node_number)
+ 
+    def add_item_keyvaluestore(self, msg: str):
+        item = QtWidgets.QListWidgetItem()
+        item.setTextAlignment(QtCore.Qt.AlignCenter)
+        font = QtGui.QFont()
+        font.setFamily("Tlwg Typewriter")
+        item.setFont(font)
+        item.setText(msg)
+        self.availableList.addItem(item)  
+
+    def add_key_value(self):
+        print("Adding Key Value")
+
+    def remove_key_value(self):
+        print("Removing Key Value")
+
+    def get_key_value(self):
+        print("Get Key Value")
+
+    def retrieve_key_value(self):
+        print("Retrieve Key Value")
+
+    def remove_item_keyvaluestore(self, msg: str):
+        item = QtWidgets.QListWidgetItem()
+        item.setTextAlignment(QtCore.Qt.AlignCenter)
+        font = QtGui.QFont()
+        font.setFamily("Tlwg Typewriter")
+        item.setFont(font)
+        item.setText(msg)
+        self.availableList.removeItemWidget(item)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1116, 624)
@@ -61,6 +101,7 @@ class Ui_MainWindow(object):
         self.DataframeField.setObjectName("DataframeField")
         self.addKeyValue = QtWidgets.QPushButton(self.centralwidget)
         self.addKeyValue.setGeometry(QtCore.QRect(430, 70, 171, 61))
+        self.addKeyValue.clicked.connect(self.add_key_value)
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
@@ -209,6 +250,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.removeKeyValue.setObjectName("removeKeyValue")
+        self.removeKeyValue.clicked.connect(self.remove_key_value)
         self.getKeyValue = QtWidgets.QPushButton(self.centralwidget)
         self.getKeyValue.setGeometry(QtCore.QRect(430, 210, 171, 61))
         font = QtGui.QFont()
@@ -235,6 +277,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.getKeyValue.setObjectName("getKeyValue")
+        self.getKeyValue.clicked.connect(self.get_key_value)
         self.nodeID = QtWidgets.QLCDNumber(self.centralwidget)
         self.nodeID.setGeometry(QtCore.QRect(850, 10, 251, 51))
         font = QtGui.QFont()
@@ -245,6 +288,7 @@ class Ui_MainWindow(object):
         self.nodeID.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.nodeID.setDigitCount(10)
         self.nodeID.setObjectName("nodeID")
+        self.nodeID.display(self.node_number)
         self.DataframeField_2 = QtWidgets.QTextBrowser(self.centralwidget)
         self.DataframeField_2.setEnabled(True)
         self.DataframeField_2.setGeometry(QtCore.QRect(620, 280, 481, 331))
@@ -302,12 +346,6 @@ class Ui_MainWindow(object):
 "}     \n"
 "      ")
         self.availableList.setObjectName("availableList")
-        item = QtWidgets.QListWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignCenter)
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        item.setFont(font)
-        self.availableList.addItem(item)
         self.retrieveKeyValue = QtWidgets.QPushButton(self.centralwidget)
         self.retrieveKeyValue.setGeometry(QtCore.QRect(910, 211, 191, 61))
         font = QtGui.QFont()
@@ -334,6 +372,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.retrieveKeyValue.setObjectName("retrieveKeyValue")
+        self.retrieveKeyValue.clicked.connect(self.retrieve_key_value)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -383,15 +422,13 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; -qt-user-state:65536; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p></body></html>"))
         __sortingEnabled = self.availableList.isSortingEnabled()
         self.availableList.setSortingEnabled(False)
-        item = self.availableList.item(0)
-        item.setText(_translate("MainWindow", "asdsadsa"))
         self.availableList.setSortingEnabled(__sortingEnabled)
         self.retrieveKeyValue.setText(_translate("MainWindow", "Retrieve Key Value"))
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Ui_MainWindow(2)
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

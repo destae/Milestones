@@ -33,7 +33,7 @@ class KeyValueStore:
     If the key value store home node does not align with the home node of the store, it sends a request to the right key value store to add the pair.
     '''
     def add_key_value(self, key: Key, value):
-        self.key_store.update({key.get_name(), value})
+        self.key_store.update({key.get_name(): value})
 
     '''
     Removes the specified key from the store. 

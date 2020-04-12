@@ -50,7 +50,6 @@ class Dataframe:
         tmp_string = ""
         for row in self.data:
             tmp_string += str(row) + "\n"
-        print(tmp_string)
         return tmp_string
 
     
