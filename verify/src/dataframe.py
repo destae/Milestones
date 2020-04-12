@@ -1,8 +1,8 @@
 import os
-import utils
-from kv_store import Key
-from kv_store import KeyValueStore
-from schema import Schema
+import json
+from verify.src import utils
+from verify.src.kv_store import *
+from verify.src.schema import Schema
 
 class Dataframe:
     ## Initialises the dataframe. Creates a key value pair and inserts it into the Key Value Store
@@ -12,7 +12,7 @@ class Dataframe:
         self.nrows = sch.get_nrows()
         self.data = data
         if kv and key:
-            kv.add_key_value(key, self.data)
+            kv.add_key_value(key, self.serialize_dataframe())
         
     
     #Constructor that creates a new Dataframe from an array
@@ -50,6 +50,28 @@ class Dataframe:
         tmp_string = ""
         for row in self.data:
             tmp_string += str(row) + "\n"
+        print(tmp_string)
         return tmp_string
 
+    # Returns a string representation of this dataframe in json form.
+    def serialize_dataframe(self) -> str:
+        df_dict = vars(self)
+        df_dict['schema'] = vars(self.schema)
+        return json.dumps(df_dict)
     
+    @classmethod
+    def from_json(cls, str_df):
+        return json.loads(str_df, object_hook=json_helper)
+
+
+def json_helper(df):
+    if "schema" in df and "data" in df:
+        sc_dict = df["schema"]
+        sc = Schema(schema_list=sc_dict["schema_list"],nrows=sc_dict["nrows"],ncols=sc_dict["ncols"])
+        return Dataframe(data=df["data"],sch=sc)
+    return df
+
+
+
+def deserialize_dataframe(str_df) -> Dataframe:
+    return json.loads(str_df, object_hook=json_helper)

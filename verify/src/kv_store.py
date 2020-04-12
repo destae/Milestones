@@ -1,4 +1,4 @@
-import utils
+from verify.src import utils
 
 class Key:
     ## Creates a key class: main constructor
@@ -24,7 +24,6 @@ class Key:
 
 class KeyValueStore:
     def __init__(self, home_node: int=-1):
-        import client
         self.home_node = home_node
         self.key_store = {}
 
@@ -57,4 +56,10 @@ class KeyValueStore:
 
 
     def wait_and_get(self, key: Key):
-        return self.get_value(key)
+        if key.get_home() != self.home_node:
+            #Request to proper node
+            return None
+        else:
+            return self.get_value(key)
+
+# Fixes a circular dependency

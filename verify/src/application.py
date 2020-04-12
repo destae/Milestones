@@ -1,9 +1,10 @@
 """Defines an Application Class"""
-from abc import ABC, abstractmethod
-from kv_store import *
-from dataframe import *
-from client import *
 import time
+from abc import ABC, abstractmethod
+from verify.src.kv_store import Key, KeyValueStore
+from verify.src.dataframe import Dataframe
+from verify.src.serialize import *
+from verify.src.client import Client
 
 
 class Application(ABC):
@@ -11,6 +12,7 @@ class Application(ABC):
 
     def __init__(self, idx: int, kv: KeyValueStore):
         self.idx = idx
+        self.kv = kv
         super().__init__()
         self.node = Client(self.idx, kv)
 
@@ -20,7 +22,7 @@ class Application(ABC):
         while self.node.tmp_dataframe == None:
             time.sleep(1)
         
-        print((self.node.tmp_data).dataframe_to_string())           # For the time being it just prints the returned dataframe
+        print((self.node.tmp_dataframe).dataframe_to_string())           # For the time being it just prints the returned dataframe
 
     
     def add_value(self, k: Key, d: Dataframe):

@@ -2,8 +2,8 @@ import os
 
 class Schema:
     ## Creates a schema object: main constructor
-    def __init__(self, sch: list, ncols: int=0,nrows: int=0):
-        self.schema_list = sch
+    def __init__(self, schema_list: list, ncols: int=0,nrows: int=0):
+        self.schema_list = schema_list
         self.ncols = ncols
         self.nrows = nrows
 
@@ -11,6 +11,8 @@ class Schema:
         """Overrides the default implementation"""
         if isinstance(other, Schema):
             return self.schema_list == other.schema_list
+        if "schema_list" in other:
+            return self.schema_list == other['schema_list']
         return False
 
     # Sets the number of rows represented in teh schema for the dataframe

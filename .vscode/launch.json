@@ -12,6 +12,7 @@
             },
             "request": "launch",
             "program": "${file}",
+            "args": ["0"],
             "console": "integratedTerminal"
         },
         {

@@ -1,15 +1,6 @@
-
-# What is a data adapter meant to be able to do?
-# It is meant to be able to:
-    # open a file
-    # read a file
-    # determine the longest number of columns
-    # determine the schema
-    # generate a dataframe
-
-import utils
-from dataframe import Dataframe
-from schema import Schema
+from verify.src import utils
+from verify.src.dataframe import Dataframe
+from verify.src.schema import Schema
 
 class Adapter:
     def __init__(self, name: str):

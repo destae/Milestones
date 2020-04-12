@@ -1,12 +1,11 @@
 import socket
 import select
+import sys
 import errno
 from threading import Thread
-from kv_store import *
-from serialize import *
-from dataframe import *
-import sys
-
+from verify.src.kv_store import *
+from verify.src.serialize import *
+from verify.src.dataframe import *
 
 HEADER_LENGTH = 10
 
@@ -74,11 +73,11 @@ class Client:
                     k = Key(msg[1], self.home_node)         # key
                     d = self.store.get_value(k)             # dataframe
 
-                    data = "datakv|" + serialize_dataframe(d) 
+                    data = "datakv|" + d.serialize_dataframe()
                     self.send(int(msg[2]), data)
 
                 elif (msg[0] == "datakv"):
-                    self.tmp_dataframe = deserialize_dataframe(msg[1])      # dataframe
+                    self.tmp_dataframe = Dataframe.from_json(msg[1])      # dataframe
 
                 # print(f'{self.username} > {message}')
 
@@ -90,5 +89,5 @@ class Client:
                 continue
 
             except Exception as e:
-                print('Reading error: '.format(str(e)))
+                print(f"Reading error: {str(e)}")
                 sys.exit()
