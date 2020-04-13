@@ -22,6 +22,7 @@ class Adapter:
         self.nrows = 0
         self.determine_number_of_rows() ## determines the number of total lines in the file
         self.schema = Schema(self.sch, self.longest_column, self.nrows) ## creates a schema object
+        self.file_close()
         
     ## Opens the file
     def file_open(self):
@@ -94,8 +95,10 @@ class Adapter:
 
     ## Reads the file, and returns the 2D array of data
     def create_dataframe(self, start: int, end: int):
+        self.file_open()
         if end < start or start < 0 or end < 0 or end > self.nrows-1:
             print("Error: Invalid start and end lines.")
+            self.file_close()
         else:
             data = [['' for x in range(self.longest_column)] for y in range(end+2-start)]
             self.data_file.seek(0)
@@ -121,6 +124,7 @@ class Adapter:
                                 current_column += 1
                                 data[current_row][current_column] = self.extract_data(line[start_index:end_index], current_column)
                 line = self.data_file.readline()
+            self.file_close()
             return data
 
     ## Extracts the data from a set index from a given line -- and determines if the data is valid

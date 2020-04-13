@@ -36,7 +36,7 @@ class Demo(Application):
         Dataframe.from_scalar(self.verify,self.kv,sum_vals)
 
     def summarizer(self):
-        result = self.kv    .wait_and_get(self.verify)
+        result = self.kv.wait_and_get(self.verify)
         expected = self.kv.wait_and_get(self.check)
         assert expected.get_value(0, 0) == result.get_value(0, 0) % "Failure"
     

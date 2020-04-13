@@ -3,7 +3,7 @@ import select
 from queue import *
 
 HEADER_LENGTH = 10
-IP = "127.0.0.12"
+IP = "127.0.0.1"
 PORT = 1234
 
 class Server:
@@ -18,7 +18,6 @@ class Server:
 
     # Handles message receiving
     def receive_message(self, client_socket):
-
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
             if not len(message_header):
@@ -34,6 +33,10 @@ class Server:
         return self.clients
 
     def send(self, message: str):
+        if 'adapt' in message:
+            home_node = (message.split("~"))[0]
+            tmp = message.split("|")
+
         msg = message.split("~")
         for client_socket in self.clients:
             if msg[0] == "0":

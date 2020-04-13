@@ -6,11 +6,11 @@ from kv_store import *
 from serialize import *
 from dataframe import *
 import sys
-
+from queue import *
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.12"
+IP = "127.0.0.1"
 PORT = 1234
 
 class Client:
@@ -25,8 +25,10 @@ class Client:
         self.username = str(self.home_node).encode('utf-8')
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')
         self.client_socket.send(self.username_header + self.username)
+        
         self.read_thread = Thread(target=self.read)
         self.read_thread.start()
+        
         self.store = KeyValueStore(node_name)
         self.tmp_dataframe = None
 
@@ -55,13 +57,18 @@ class Client:
                     sys.exit()
 
                 message_length = int(message_header.decode('utf-8').strip())
+                print(message_length)
                 message = self.client_socket.recv(message_length).decode('utf-8')
                 print("In the client")
                 msg = message.split("|")
+                print(msg)
                 if (msg[0] == 'addkv'):
                     k = Key(msg[1], self.home_node)         # key
+                    print("Starting serialise")
                     d = deserialize_dataframe(msg[2])       # dataframe
+                    print("Made it through deserialise")
                     self.store.add_key_value(k, d)          # adding key value to the store
+                    print(d)
 
                     dd = self.store.get_value(k)
                     print(dd.dataframe_to_string())
@@ -78,7 +85,8 @@ class Client:
                     self.send(int(msg[2]), data)
 
                 elif (msg[0] == "datakv"):
-                    self.tmp_dataframe = deserialize_dataframe(msg[1])      # dataframe
+                    self.shared_que.put(('retrieve', deserialize_dataframe(msg[1])), block=True, timeout=None)
+                    # self.tmp_dataframe = deserialize_dataframe(msg[1])      # dataframe
 
                 # print(f'{self.username} > {message}')
 
@@ -92,3 +100,6 @@ class Client:
             except Exception as e:
                 print('Reading error: '.format(str(e)))
                 sys.exit()
+
+if __name__ == "__main__":
+    c = Client(2)
