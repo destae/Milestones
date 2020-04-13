@@ -30,7 +30,7 @@ class Demo(Application):
         vals = [float(i) for i in range(0,SZ)]
         sum_vals = float(sum(vals))
         d = Dataframe.from_array(self.main, self.kv, SZ, vals, "F")
-        s = Dataframe.from_scalar(self.check,self.kv,sum_vals, "F")
+        s = Dataframe.from_scalar(self.check,self.kv, sum_vals, "F")
         del d
         del s
 

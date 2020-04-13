@@ -89,3 +89,19 @@ class TestDataframe(unittest.TestCase):
         str_df = d.serialize()
         self.assertEqual(str_df, 
         json.dumps({"schema": {"schema_list": ["F"], "ncols": 1, "nrows": 5}, "ncols": 1, "nrows": 5, "data": [[0.0, 1.0, 2.0, 3.0, 4.0]]}))
+ 
+    def test_json_to_dataframe(self):
+        test_dict ={"schema": {"schema_list": ["S", "I", "I", "S", "I", "I", "I"], "ncols": 7, "nrows": 5}, "ncols": 7, "nrows": 5, "data": [["arriba", 2, 1, "2005-09-16", 55, 11, 7], ["pizza", 31490, 30, "2002-06-17", 30, 9, 6], ["chili", 112140, 130, "2005-02-25", 130, 6, 13], ["potatoes", 59389, 45, "2003-04-14", 45, 11, 11], ["ketchup", 44061, 190, "2002-10-25", 190, 5, 8]]}
+        json_df = json.dumps(test_dict)
+        self.assertEqual(self.data_frame.data, Dataframe.from_json(json_df).data)
+
+
+    def test_json_to_dataframe2(self):
+        vals = [float(i) for i in range(0,5)]
+        key = Key("test",0)
+        kv = KeyValueStore()
+        d = Dataframe.from_array(key=key,kv=kv,size=5,array=vals,arr_type='F')
+        str_df = d.serialize()
+        json_df = json.dumps({"schema": {"schema_list": ["F"], "ncols": 1, "nrows": 5}, "ncols": 1, "nrows": 5, "data": [[0.0, 1.0, 2.0, 3.0, 4.0]]})
+        test_dataframe = Dataframe.from_json(json_df)
+        self.assertEqual(d, test_dataframe) 
