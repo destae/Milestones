@@ -10,7 +10,7 @@ from queue import *
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.1"
+IP = "127.0.0.2"
 PORT = 1234
 
 class Client:

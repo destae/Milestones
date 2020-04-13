@@ -8,9 +8,9 @@ from adapter import *
 def json_helper(df):
     if "schema" in df and "data" in df:
         sc_dict = df["schema"]
-        print(sc_dict)
         sc = Schema(sch=sc_dict["schema_list"],nrows=sc_dict["nrows"],ncols=sc_dict["ncols"])
-        return Dataframe(data=df["data"],sch=sc)
+        d = Dataframe(data=df["data"],sch=sc)
+        return d
     return df
 
 def serialize_dataframe(df: Dataframe) -> str:
