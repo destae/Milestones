@@ -10,17 +10,16 @@ from queue import *
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.5"
-PORT = 1234
-
 class Client:
     '''
     Initialises the client object.
     '''
-    def __init__(self, node_name: int, shared_queue: Queue):
+    def __init__(self, ip: str, port: int, node_name: int, shared_queue: Queue):
+        self.ip = ip
+        self.port = port
         self.home_node = node_name
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((IP, PORT))
+        self.client_socket.connect((self.ip, self.port))
         self.client_socket.setblocking(False)
         self.username = str(self.home_node).encode('utf-8')
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')

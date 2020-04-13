@@ -10,13 +10,18 @@ from kv_store import *
 from serialize import *
 
 class Ui_MainWindow(object):    
-    def __init__(self, file_name):
+    def __init__(self):
+        with open(os.path.join(sys.path[0], "config.ini"), "r") as f:
+            config = (f.read()).split("\n")
+        self.ip = ((config[0]).split(": ")[1])
+        self.port = int((config[1]).split(": ")[1])
         self.shared_queue = Queue()
-        self.adpt = Adapter(file_name)
-        self.s = Server()
+        self.file = ((config[2]).split(": ")[1])
+        print(self.file)
+        self.adpt = Adapter(self.file)
+        self.s = Server(self.ip, self.port)
         self.server_thread = Thread(target=self.start_server)
         self.server_thread.start()
-
         self.nodes_thread = Thread(target=self.update_nodes)
         self.nodes_thread.start()
 
@@ -367,7 +372,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow("/home/eden/Desktop/Milestones/7DegreesOfLinus/data/data.sor")
+    ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

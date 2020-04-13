@@ -1,20 +1,22 @@
 import socket
+import sys
 import select
 from queue import *
+import os
 
 HEADER_LENGTH = 10
-IP = "127.0.0.5"
-PORT = 1234
 
 class Server:
-    def __init__(self):
+    def __init__(self, ip: str, port: int):
+        self.ip = ip
+        self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server_socket.bind((IP, PORT))
+        self.server_socket.bind((self.ip, self.port))
         self.server_socket.listen()
         self.sockets_list = [self.server_socket]
         self.clients = {}
-        print(f'Listening for connections on {IP}:{PORT}...')
+        print(f'Listening for connections on {self.ip}:{self.port}...')
 
     # Handles message receiving
     def receive_message(self, client_socket):
@@ -78,3 +80,7 @@ class Server:
 
                 self.sockets_list.remove(notified_socket)
                 del self.clients[notified_socket]
+
+
+if __name__ == "__main__":
+    Server()

@@ -7,9 +7,9 @@ from queue import *
 
 
 class Application():
-    def __init__(self, idx: int, shared_que: Queue):
+    def __init__(self, ip: str, port: int, idx: int, shared_que: Queue):
         self.idx = idx
-        self.node = Client(self.idx, shared_que)
+        self.node = Client(ip, port, self.idx, shared_que)
 
     def get_value(self, k: Key):
         self.node.send(k.get_home(), "getkv|" + str(k.get_name()) + "|" + str(self.idx))

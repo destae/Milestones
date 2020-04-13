@@ -11,12 +11,17 @@ from application import *
 from dataframe import *
 
 class Ui_MainWindow(object):
-    def __init__(self, mw, node_number: int):
-        self.node_number = node_number
+    def __init__(self):
+        with open(os.path.join(sys.path[0], "config.ini"), "r") as f:
+            config = (f.read()).split("\n")
+
+        self.ip = ((config[0]).split(": ")[1])
+        self.port = int((config[1]).split(": ")[1])
+        self.node_number = int((config[3]).split(": ")[1])
+
         self.shared_queue = Queue()
         self.main_queue = Queue()
-        self.app = Application(self.node_number, self.shared_queue)
-        self.setupUi(mw)
+        self.app = Application(self.ip, self.port, self.node_number, self.shared_queue)
         
         self.store_thread = Thread(target=self.update_store)
         self.store_thread.start()
@@ -58,29 +63,24 @@ class Ui_MainWindow(object):
                         tmp_data = Dataframe([[eval(self.textEditDFS.toPlainText())]], tmp_sch)
                         tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
                         self.app.add_value(tmp_key, tmp_data)  
-        print("Adding Key Value")
 
     def remove_key_value(self):
         if not(self.textEditHome.toPlainText == "" or self.textEditKey.toPlainText() == ""):
                 tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
                 self.app.remove_value(tmp_key)
-        print("Removing Key Value")
 
     def get_key_value(self):
         if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
                 tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
                 self.app.get_value(tmp_key)
-                print("request sent")
                 tmp_data = self.main_queue.get(block=True, timeout=None)
                 self.DataframeField.setText(str(tmp_data))
-        print("Get Key Value")
 
     def retrieve_key_value(self):
         tmp = self.availableList.currentItem()
         k = Key(tmp.text(), self.node_number)
         d = self.app.retrieve_value(k)
         self.DataframeField.setText(str(d.dataframe_to_string()))
-        print("Retrieve Key Value")
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -496,6 +496,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow(MainWindow, sys.argv[1])
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
