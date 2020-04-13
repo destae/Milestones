@@ -19,6 +19,15 @@ class Application():
         
         print((self.node.tmp_data).dataframe_to_string())           # For the time being it just prints the returned dataframe
 
+    def run_(self):
+        if self.this_node() == 1:
+            self.producer()
+        elif self.this_node() == 2:
+            self.counter()
+        elif self.this_node() == 3:
+            self.summarizer()
+        else:
+            pass
     
     def add_value(self, k: Key, d: Dataframe):
         self.node.send(k.get_home(), "addkv|" + k.get_name() + "|" + serialize_dataframe(d))
