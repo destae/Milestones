@@ -1,4 +1,5 @@
 import sys
+import utils
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from client import *
@@ -11,10 +12,28 @@ from dataframe import *
 
 class Ui_MainWindow(object):
     def __init__(self, node_number: int):
-        # self.c = Client()
         self.node_number = node_number
-        # self.app = Application(self.node_number)
- 
+        self.shared_queue = Queue()
+        self.app = Application(self.node_number, self.shared_queue)
+
+        self.store_thread = Thread(target=self.update_store)
+        self.store_thread.start()
+    
+    def update_store(self):
+            while True:
+                data = self.shared_queue.get(block=True, timeout=None)
+                if (data[0] == 'add'):
+                        self.add_item_keyvaluestore(data[1])
+                elif (data[0] == 'remove'): 
+                        for i in range(self.availableList.count()):
+                                tmp_item = self.availableList.item(i)
+                                if tmp_item 
+                        for i in range(root.childCount()):
+                                if (root.child(i)).text(0) == data[1]:
+                                        item = self.treeSelectedData.takeTopLevelItem(i)
+                                        del item 
+                        
+                        
     def add_item_keyvaluestore(self, msg: str):
         item = QtWidgets.QListWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -24,24 +43,6 @@ class Ui_MainWindow(object):
         item.setText(msg)
         self.availableList.addItem(item)  
 
-    def add_key_value(self):
-        if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
-                if(not(self.textEditDFA.toPlainText() == "")):
-                        tmp_data = self.textEditDFA.toPlainText()
-
-
-                
-        print("Adding Key Value")
-
-    def remove_key_value(self):
-        print("Removing Key Value")
-
-    def get_key_value(self):
-        print("Get Key Value")
-
-    def retrieve_key_value(self):
-        print("Retrieve Key Value")
-
     def remove_item_keyvaluestore(self, msg: str):
         item = QtWidgets.QListWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -50,6 +51,38 @@ class Ui_MainWindow(object):
         item.setFont(font)
         item.setText(msg)
         self.availableList.removeItemWidget(item)
+
+    def add_key_value(self):
+        if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
+                if(not(self.textEditDFA.toPlainText() == "")):
+                        tmp_sch = Schema([schema_from_list(eval(self.textEditDFA.toPlainText()))], 1, len(eval(self.textEditDFA.toPlainText())))
+                        tmp_data = Dataframe([eval(self.textEditDFA.toPlainText())], tmp_sch)
+                        tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
+                        self.app.add_value(tmp_key, tmp_data)    
+                elif(not(self.textEditDFS.toPlainText() == "")):
+                        tmp_sch = Schema([determine_type(self.textEditDFS.toPlainText())], 1, 1)
+                        tmp_data = Dataframe([[eval(self.textEditDFS.toPlainText())]], tmp_sch)
+                        tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
+                        self.app.add_value(tmp_key, tmp_data)  
+        print("Adding Key Value")
+
+    def remove_key_value(self):
+        if not(self.textEditHome.toPlainText == "" or self.textEditKey.toPlainText() == ""):
+                tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
+                self.app.remove_value(tmp_key)
+        print("Removing Key Value")
+
+    def get_key_value(self):
+        if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
+                tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
+        print("Get Key Value")
+
+    def retrieve_key_value(self):
+        tmp = self.availableList.currentItem()
+        k = Key(tmp.text(), self.node_number)
+        d = self.app.retrieve_value(k)
+        self.DataframeField.setText(str(d.dataframe_to_string()))
+        print("Retrieve Key Value")
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -115,6 +148,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.addKeyValue.setObjectName("addKeyValue")
+        self.addKeyValue.clicked.connect(self.add_key_value)
         self.textEditKey = QtWidgets.QTextEdit(self.centralwidget)
         self.textEditKey.setGeometry(QtCore.QRect(10, 220, 531, 35))
         font = QtGui.QFont()
@@ -185,6 +219,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.removeKeyValue.setObjectName("removeKeyValue")
+        self.removeKeyValue.clicked.connect(self.remove_key_value)
         self.getKeyValue = QtWidgets.QPushButton(self.centralwidget)
         self.getKeyValue.setGeometry(QtCore.QRect(190, 470, 171, 61))
         font = QtGui.QFont()
@@ -211,6 +246,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.getKeyValue.setObjectName("getKeyValue")
+        self.getKeyValue.clicked.connect(self.get_key_value)
         self.runApplication = QtWidgets.QPushButton(self.centralwidget)
         self.runApplication.setGeometry(QtCore.QRect(820, 80, 211, 61))
         font = QtGui.QFont()
@@ -248,14 +284,14 @@ class Ui_MainWindow(object):
         self.nodeID.setDigitCount(10)
         self.nodeID.setObjectName("nodeID")
         self.nodeID.display(self.node_number)
-        self.DataframeField_2 = QtWidgets.QTextBrowser(self.centralwidget)
-        self.DataframeField_2.setEnabled(True)
-        self.DataframeField_2.setGeometry(QtCore.QRect(550, 219, 481, 311))
+        self.DataframeField = QtWidgets.QTextBrowser(self.centralwidget)
+        self.DataframeField.setEnabled(True)
+        self.DataframeField.setGeometry(QtCore.QRect(550, 219, 481, 311))
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
-        self.DataframeField_2.setFont(font)
-        self.DataframeField_2.setStyleSheet("QTextBrowser {\n"
+        self.DataframeField.setFont(font)
+        self.DataframeField.setStyleSheet("QTextBrowser {\n"
 "    background-color: rgb(238, 238, 236);\n"
 "      border-style: outset;\n"
 "    border-width: 2px;\n"
@@ -264,8 +300,8 @@ class Ui_MainWindow(object):
 "    color: rgb(0, 0, 0);\n"
 "}\n"
 "")
-        self.DataframeField_2.setPlaceholderText("")
-        self.DataframeField_2.setObjectName("DataframeField_2")
+        self.DataframeField.setPlaceholderText("")
+        self.DataframeField.setObjectName("DataframeField")
         self.availableList = QtWidgets.QListWidget(self.centralwidget)
         self.availableList.setGeometry(QtCore.QRect(550, 9, 261, 201))
         font = QtGui.QFont()
@@ -306,12 +342,6 @@ class Ui_MainWindow(object):
 "}     \n"
 "      ")
         self.availableList.setObjectName("availableList")
-        item = QtWidgets.QListWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignCenter)
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        item.setFont(font)
-        self.availableList.addItem(item)
         self.retrieveKeyValue = QtWidgets.QPushButton(self.centralwidget)
         self.retrieveKeyValue.setGeometry(QtCore.QRect(820, 150, 211, 61))
         font = QtGui.QFont()
@@ -338,6 +368,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.retrieveKeyValue.setObjectName("retrieveKeyValue")
+        self.retrieveKeyValue.clicked.connect(self.retrieve_key_value)
         self.textEditDFA = QtWidgets.QTextEdit(self.centralwidget)
         self.textEditDFA.setGeometry(QtCore.QRect(10, 280, 531, 111))
         font = QtGui.QFont()
@@ -417,7 +448,7 @@ class Ui_MainWindow(object):
         self.sublogo.setText(_translate("MainWindow", "Client Application"))
         self.removeKeyValue.setText(_translate("MainWindow", "Remove Key Value"))
         self.getKeyValue.setText(_translate("MainWindow", "Get Key Value"))
-        self.DataframeField_2.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.DataframeField.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Tlwg Typewriter\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
@@ -443,8 +474,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-#     a = Application(2)
-    ui = Ui_MainWindow(3)
+    ui = Ui_MainWindow(sys.argv[1])
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

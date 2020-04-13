@@ -32,6 +32,19 @@ def determine_type(data):
     else:
         return 'I'
 
+def schema_from_list(data: list):
+    sch = 'B'
+    for i in range (len(data)):
+        t = determine_type(str(data[i]))
+        if t == 'S':
+            return 'S'
+        elif t == 'F':
+            sch = 'F'
+        elif t == 'I' and sch != 'F':
+            sch = 'I'
+        elif t == 'B' and sch != 'F' and sch != 'I':
+            sch = 'B'
+    return sch
 
 ## Removes the whitespace of a given data point
 def remove_whitespace(data):

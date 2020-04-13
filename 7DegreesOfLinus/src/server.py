@@ -3,7 +3,7 @@ import select
 from queue import *
 
 HEADER_LENGTH = 10
-IP = "127.0.0.2"
+IP = "127.0.0.4"
 PORT = 1234
 
 class Server:

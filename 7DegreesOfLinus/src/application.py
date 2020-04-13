@@ -3,16 +3,16 @@ from kv_store import *
 from dataframe import *
 from client import *
 import time
+from queue import *
 
 
 class Application():
-    def __init__(self, idx: int):
-        self.shared_queue = Queue()
+    def __init__(self, idx: int, shared_que: Queue):
         self.idx = idx
-        self.node = Client(self.idx, self.shared_queue)
+        self.node = Client(self.idx, shared_que)
 
     def get_value(self, k: Key):
-        self.node.send(k.get_home(), "getkv|" + k.get_name())
+        self.node.send(k.get_home(), "getkv|" + k.get_name() + "|" + str(self.idx))
 
         while self.node.tmp_dataframe == None:
             time.sleep(1)
@@ -34,10 +34,13 @@ class Application():
 
     def remove_value(self, k: Key):
         self.node.send(k.get_home(), "rmkv|" + k.get_name())
-    
-    def get_value(self, k: Key):
-        self.node.send(k.get_home(), "getkv|" + k.get_name() + "|" + str(self.idx))
 
+    def retrieve_value(self, k: Key):
+        self.node.retrieve_value(k)
+    
     def this_node(self):
         """Returns the id of this application"""
         return self.idx
+
+if __name__ == "__main__": 
+    Application(2)

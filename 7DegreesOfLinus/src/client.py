@@ -10,14 +10,14 @@ from queue import *
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.2"
+IP = "127.0.0.4"
 PORT = 1234
 
 class Client:
     '''
     Initialises the client object.
     '''
-    def __init__(self, node_name: int):
+    def __init__(self, node_name: int, shared_queue: Queue):
         self.home_node = node_name
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((IP, PORT))
@@ -26,12 +26,14 @@ class Client:
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')
         self.client_socket.send(self.username_header + self.username)
         
-        self.read_thread = Thread(target=self.read)
+        self.read_thread = Thread(target=self.read, args=(shared_queue,))
         self.read_thread.start()
         
         self.store = KeyValueStore(node_name)
         self.tmp_dataframe = None
 
+    def retrieve_value(self, k: Key):
+        return self.store.get_value(k)
     '''
     Sends a message to the specified node.
     '''
@@ -48,7 +50,7 @@ class Client:
     Reads the incoming message or throws an exception.
     Updates the key value store that is associated with the node.
     '''
-    def read(self):
+    def read(self, shared_queue: Queue):
         while True:
             try:
                 message_header = self.client_socket.recv(HEADER_LENGTH)
@@ -64,31 +66,30 @@ class Client:
                 print(msg)
                 if (msg[0] == 'addkv'):
                     k = Key(msg[1], self.home_node)         # key
-                    print("Starting serialise")
                     d = deserialize_dataframe(msg[2])       # dataframe
-                    print("Made it through deserialise")
                     self.store.add_key_value(k, d)          # adding key value to the store
-                    print(d)
 
                     dd = self.store.get_value(k)
-                    print(dd.dataframe_to_string())
+
+                    shared_queue.put(('add', k.get_name()), block=True, timeout=None)
 
                 elif (msg[0] == 'rmkv'):
                     k = Key(msg[1], self.home_node)         # key
                     self.store.remove_key_value(k)          # removing key from store
 
+                    shared_queue.put(('remove', k.get_name()), block=True, timeout=None)
+
                 elif (msg[0] == 'getkv'):
                     k = Key(msg[1], self.home_node)         # key
                     d = self.store.get_value(k)             # dataframe
 
-                    data = "datakv|" + serialize_dataframe(d) 
+                    data = "datakv|" + str(self.home_node) + "|" + str(msg[1]) + "|" + serialize_dataframe(d) 
                     self.send(int(msg[2]), data)
 
                 elif (msg[0] == "datakv"):
-                    self.shared_que.put(('retrieve', deserialize_dataframe(msg[1])), block=True, timeout=None)
-                    # self.tmp_dataframe = deserialize_dataframe(msg[1])      # dataframe
-
-                # print(f'{self.username} > {message}')
+                    k = Key(str(msg[2]), int(msg[1]))
+                    d = deserialize_dataframe(str(msg[3]))
+                    self.shared_que.put(('retrieve', k, d), block=True, timeout=None)
 
             except IOError as e:
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
@@ -102,4 +103,5 @@ class Client:
                 sys.exit()
 
 if __name__ == "__main__":
-    c = Client(2)
+    q = Queue()
+    Client(3, q)
