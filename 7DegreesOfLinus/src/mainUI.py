@@ -20,8 +20,6 @@ class Ui_MainWindow(object):
         self.nodes_thread = Thread(target=self.update_nodes)
         self.nodes_thread.start()
 
-        # self.server_thread.join()
-        # self.nodes_thread.join()
 
     def update_nodes(self):
         while True:
@@ -44,10 +42,6 @@ class Ui_MainWindow(object):
                             d = Dataframe(self.adpt.create_dataframe(int(self.textEditStart.toPlainText()), int(self.textEditEnd.toPlainText())), self.adpt.retrieve_schema())
                             self.DataframeField.setText(str(d.dataframe_to_string()))
                             msg = str(self.textEditHome.toPlainText()) + "~addkv|" + str(self.textEditKey.toPlainText()) + "|" + str(serialize_dataframe(d))
-                            self.textEditEnd.setText("")
-                            self.textEditHome.setText("")
-                            self.textEditStart.setText("")
-                            self.textEditKey.setText("")
                             self.s.send(msg)
 
     def tree_contains(self, home_node: str):
@@ -87,7 +81,7 @@ class Ui_MainWindow(object):
         self.treeGroupBox.setObjectName("treeGroupBox")
         self.treeSelectedData = QtWidgets.QTreeWidget(self.treeGroupBox)
         self.treeSelectedData.setEnabled(True)
-        self.treeSelectedData.setGeometry(QtCore.QRect(10, 10, 401, 271))
+        self.treeSelectedData.setGeometry(QtCore.QRect(10, 10, 401, 381))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -177,6 +171,30 @@ class Ui_MainWindow(object):
 "    border-color: rgb(0, 0, 0);\n"
 "    color: rgb(0, 0, 0);\n"
 "}\n"
+"QScrollBar:vertical {              \n"
+"    border: none;\n"
+"    background:rgb(238, 238, 236);\n"
+"    width:3px;\n"
+"    margin: 0px 0px 0px 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    min-height: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    height: 0px;\n"
+"    subcontrol-position: bottom;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    height: 0 px;\n"
+"    subcontrol-position: top;\n"
+"}     \n"
 "")
         self.DataframeField.setPlaceholderText("")
         self.DataframeField.setObjectName("DataframeField")

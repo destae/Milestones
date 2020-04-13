@@ -10,7 +10,7 @@ from queue import *
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.4"
+IP = "127.0.0.5"
 PORT = 1234
 
 class Client:
@@ -43,7 +43,6 @@ class Client:
             if message:
                 message = message.encode('utf-8')
                 message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')
-                print(f"{len(message):<{HEADER_LENGTH}}")
                 self.client_socket.send(message_header + message)
 
     '''
@@ -59,11 +58,8 @@ class Client:
                     sys.exit()
 
                 message_length = int(message_header.decode('utf-8').strip())
-                print(message_length)
                 message = self.client_socket.recv(message_length).decode('utf-8')
-                print("In the client")
                 msg = message.split("|")
-                print(msg)
                 if (msg[0] == 'addkv'):
                     k = Key(msg[1], self.home_node)         # key
                     d = deserialize_dataframe(msg[2])       # dataframe
@@ -82,14 +78,13 @@ class Client:
                 elif (msg[0] == 'getkv'):
                     k = Key(msg[1], self.home_node)         # key
                     d = self.store.get_value(k)             # dataframe
-
                     data = "datakv|" + str(self.home_node) + "|" + str(msg[1]) + "|" + serialize_dataframe(d) 
                     self.send(int(msg[2]), data)
 
                 elif (msg[0] == "datakv"):
                     k = Key(str(msg[2]), int(msg[1]))
-                    d = deserialize_dataframe(str(msg[3]))
-                    self.shared_que.put(('retrieve', k, d), block=True, timeout=None)
+                    d = deserialize_dataframe(msg[3])
+                    shared_queue.put(('retrieve', k, d), block=True, timeout=None)
 
             except IOError as e:
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
@@ -101,7 +96,3 @@ class Client:
             except Exception as e:
                 print('Reading error: '.format(str(e)))
                 sys.exit()
-
-if __name__ == "__main__":
-    q = Queue()
-    Client(3, q)

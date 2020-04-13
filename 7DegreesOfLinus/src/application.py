@@ -12,13 +12,9 @@ class Application():
         self.node = Client(self.idx, shared_que)
 
     def get_value(self, k: Key):
-        self.node.send(k.get_home(), "getkv|" + k.get_name() + "|" + str(self.idx))
-
-        while self.node.tmp_dataframe == None:
-            time.sleep(1)
+        self.node.send(k.get_home(), "getkv|" + str(k.get_name()) + "|" + str(self.idx))
+        print("Sent to node")
         
-        print((self.node.tmp_data).dataframe_to_string())           # For the time being it just prints the returned dataframe
-
     def run_(self):
         if self.this_node() == 1:
             self.producer()
@@ -36,7 +32,7 @@ class Application():
         self.node.send(k.get_home(), "rmkv|" + k.get_name())
 
     def retrieve_value(self, k: Key):
-        self.node.retrieve_value(k)
+        return self.node.retrieve_value(k)
     
     def this_node(self):
         """Returns the id of this application"""

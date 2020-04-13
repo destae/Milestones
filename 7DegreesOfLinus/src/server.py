@@ -3,7 +3,7 @@ import select
 from queue import *
 
 HEADER_LENGTH = 10
-IP = "127.0.0.4"
+IP = "127.0.0.5"
 PORT = 1234
 
 class Server:
@@ -33,10 +33,6 @@ class Server:
         return self.clients
 
     def send(self, message: str):
-        if 'adapt' in message:
-            home_node = (message.split("~"))[0]
-            tmp = message.split("|")
-
         msg = message.split("~")
         for client_socket in self.clients:
             if msg[0] == "0":
@@ -44,7 +40,6 @@ class Server:
             else:
                 if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
                     client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
-                    print(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
 
     def run(self, shared_que: Queue):
         while True:
@@ -77,16 +72,9 @@ class Server:
 
                     user = self.clients[notified_socket]
 
-                    print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
-
-                    self.send(message)
+                    self.send(message["data"].decode("utf-8"))
                     
             for notified_socket in exception_sockets:
 
                 self.sockets_list.remove(notified_socket)
                 del self.clients[notified_socket]
-
-# if __name__ == "__main__":
-#     q = Queue()
-#     s = Server()
-#     s.run(q)

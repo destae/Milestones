@@ -11,11 +11,13 @@ from application import *
 from dataframe import *
 
 class Ui_MainWindow(object):
-    def __init__(self, node_number: int):
+    def __init__(self, mw, node_number: int):
         self.node_number = node_number
         self.shared_queue = Queue()
+        self.main_queue = Queue()
         self.app = Application(self.node_number, self.shared_queue)
-
+        self.setupUi(mw)
+        
         self.store_thread = Thread(target=self.update_store)
         self.store_thread.start()
     
@@ -27,12 +29,13 @@ class Ui_MainWindow(object):
                 elif (data[0] == 'remove'): 
                         for i in range(self.availableList.count()):
                                 tmp_item = self.availableList.item(i)
-                                if tmp_item 
-                        for i in range(root.childCount()):
-                                if (root.child(i)).text(0) == data[1]:
-                                        item = self.treeSelectedData.takeTopLevelItem(i)
-                                        del item 
-                        
+                                if str(tmp_item.text()) == str(data[1]):
+                                        self.availableList.takeItem(i)
+                elif (data[0] == 'retrieve'):
+                        msg_part1 = "Key Home Node: " + str(data[1].get_home()) + "\nKey Name: " + str(data[1].get_name()) + "\n" 
+                        msg_part2 = "Dataframe:\n" + str(data[2].dataframe_to_string())
+                        self.main_queue.put((msg_part1+msg_part2), block=True, timeout=None)
+                        # self.DataframeField.setText(msg_part1 + msg_part2)
                         
     def add_item_keyvaluestore(self, msg: str):
         item = QtWidgets.QListWidgetItem()
@@ -43,24 +46,15 @@ class Ui_MainWindow(object):
         item.setText(msg)
         self.availableList.addItem(item)  
 
-    def remove_item_keyvaluestore(self, msg: str):
-        item = QtWidgets.QListWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignCenter)
-        font = QtGui.QFont()
-        font.setFamily("Tlwg Typewriter")
-        item.setFont(font)
-        item.setText(msg)
-        self.availableList.removeItemWidget(item)
-
     def add_key_value(self):
         if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
                 if(not(self.textEditDFA.toPlainText() == "")):
-                        tmp_sch = Schema([schema_from_list(eval(self.textEditDFA.toPlainText()))], 1, len(eval(self.textEditDFA.toPlainText())))
+                        tmp_sch = Schema([utils.schema_from_list(eval(self.textEditDFA.toPlainText()))], 1, len(eval(self.textEditDFA.toPlainText())))
                         tmp_data = Dataframe([eval(self.textEditDFA.toPlainText())], tmp_sch)
                         tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
                         self.app.add_value(tmp_key, tmp_data)    
                 elif(not(self.textEditDFS.toPlainText() == "")):
-                        tmp_sch = Schema([determine_type(self.textEditDFS.toPlainText())], 1, 1)
+                        tmp_sch = Schema([utils.determine_type(self.textEditDFS.toPlainText())], 1, 1)
                         tmp_data = Dataframe([[eval(self.textEditDFS.toPlainText())]], tmp_sch)
                         tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
                         self.app.add_value(tmp_key, tmp_data)  
@@ -75,6 +69,10 @@ class Ui_MainWindow(object):
     def get_key_value(self):
         if not(self.textEditHome.toPlainText() == "" or self.textEditKey.toPlainText() == ""):
                 tmp_key = Key(str(self.textEditKey.toPlainText()), int(self.textEditHome.toPlainText()))
+                self.app.get_value(tmp_key)
+                print("request sent")
+                tmp_data = self.main_queue.get(block=True, timeout=None)
+                self.DataframeField.setText(str(tmp_data))
         print("Get Key Value")
 
     def retrieve_key_value(self):
@@ -286,7 +284,7 @@ class Ui_MainWindow(object):
         self.nodeID.display(self.node_number)
         self.DataframeField = QtWidgets.QTextBrowser(self.centralwidget)
         self.DataframeField.setEnabled(True)
-        self.DataframeField.setGeometry(QtCore.QRect(550, 219, 481, 311))
+        self.DataframeField.setGeometry(QtCore.QRect(550, 219, 481, 311)) ## 481 311
         font = QtGui.QFont()
         font.setFamily("Tlwg Typewriter")
         font.setPointSize(12)
@@ -299,6 +297,30 @@ class Ui_MainWindow(object):
 "    border-color: rgb(0, 0, 0);\n"
 "    color: rgb(0, 0, 0);\n"
 "}\n"
+"QScrollBar:vertical {              \n"
+"    border: none;\n"
+"    background:rgb(238, 238, 236);\n"
+"    width:3px;\n"
+"    margin: 0px 0px 0px 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    min-height: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    height: 0px;\n"
+"    subcontrol-position: bottom;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical {\n"
+"    background: rgb(0, 0, 0);\n"
+"    height: 0 px;\n"
+"    subcontrol-position: top;\n"
+"}     \n"
 "")
         self.DataframeField.setPlaceholderText("")
         self.DataframeField.setObjectName("DataframeField")
@@ -474,7 +496,6 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow(sys.argv[1])
-    ui.setupUi(MainWindow)
+    ui = Ui_MainWindow(MainWindow, sys.argv[1])
     MainWindow.show()
     sys.exit(app.exec_())
