@@ -16,12 +16,18 @@ class Application():
         self.app_que = Queue()
         self.node = Client(ip, port, self.idx, shared_que, self.app_que)
 
+    '''
+    Gets the value of the key stored somewhere on the network.
+    '''
     def get_value(self, k: Key):
         self.node.send(k.get_home(), "getkv|" + str(k.get_name()) + "|" + str(self.idx))
         data = self.app_que.get(block=True, timeout=None)
         
         return data[1] # returning the dataframe
     
+    '''
+    Application run determines the node that it is and runs the appropriate function that corresponds with it.
+    '''
     def run(self):
         if self.this_node() == 1:
             self.producer()
@@ -32,6 +38,9 @@ class Application():
         else:
             pass
     
+    '''
+    Produces two key value pairs to be stored in the first node.
+    '''
     def producer(self):
         SZ = 100*10
         vals = [float(i) for i in range(0,SZ)]
@@ -47,26 +56,31 @@ class Application():
 
         print("Completed producer")
 
-
+    '''
+    Counter function.
+    Retrieves the stored key from the 1st node and sums the value contained within it.
+    '''
     def counter(self):
         v = self.get_value(self.main)
         v_data = v.get_data()
 
-        
         sum_vals = sum([v_data[0][i] for i in range(0, 100*10)])
         tmp_schm2 = Schema([utils.determine_type(str(sum_vals))], 1, 1)
         tmp_data2 = Dataframe([[sum_vals]], tmp_schm2)
         self.add_value(self.verify, tmp_data2)
         print("Completed counter")
 
-
+    '''
+    Determines if the result and the expected values are the same. 
+    Prints to console with result and asserts the reply.
+    '''
     def summarizer(self):
         result = self.get_value(self.verify)
         expected = self.get_value(self.check)
         
         summary = (expected.get_value(0, 0) == result.get_value(0, 0))
         print("Summarizer: " + str(summary))
-        return summary
+        assert summary  % "Failure"
     
     def add_value(self, k: Key, d: Dataframe):
         self.node.send(k.get_home(), "addkv|" + k.get_name() + "|" + serialize_dataframe(d))

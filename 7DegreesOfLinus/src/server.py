@@ -18,7 +18,10 @@ class Server:
         self.clients = {}
         print(f'Listening for connections on {self.ip}:{self.port}...')
 
-    # Handles message receiving
+    '''
+    Simple message handling. It creates a dictionary object of a header and a data.
+    This allows the system to be aware of the size of the data that it is consuming.
+    '''
     def receive_message(self, client_socket):
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
@@ -34,6 +37,12 @@ class Server:
     def get_clients(self):
         return self.clients
 
+    '''
+    Sends the given message.
+    The message is split along a unique character ~ to determine the name of the destination node.
+    If the node exists, it sends the message. 
+    In the case that the name of the destination node is 0. The system broadcasts the message to all the nodes in the system.
+    '''
     def send(self, message: str):
         msg = message.split("~")
         for client_socket in self.clients:
@@ -43,6 +52,10 @@ class Server:
                 if self.clients[client_socket]['data'].decode('utf-8') == msg[0]:
                     client_socket.send(f"{len(msg[1]):<{HEADER_LENGTH}}".encode('utf-8') + msg[1].encode('utf-8'))
 
+    '''
+    Runs the server. 
+    This function reads the data that is coming in from the socket, and sends the message through a queue that is thread safe.
+    '''
     def run(self, shared_que: Queue):
         while True:
             read_sockets, _, exception_sockets = select.select(self.sockets_list, [], self.sockets_list)
@@ -80,7 +93,3 @@ class Server:
 
                 self.sockets_list.remove(notified_socket)
                 del self.clients[notified_socket]
-
-
-if __name__ == "__main__":
-    Server()
