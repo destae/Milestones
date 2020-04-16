@@ -26,6 +26,9 @@ class Ui_MainWindow(object):
         self.store_thread = Thread(target=self.update_store)
         self.store_thread.start()
     
+    def run_application(self):
+        self.app.run()
+
     def update_store(self):
             while True:
                 data = self.shared_queue.get(block=True, timeout=None)
@@ -40,7 +43,6 @@ class Ui_MainWindow(object):
                         msg_part1 = "Key Home Node: " + str(data[1].get_home()) + "\nKey Name: " + str(data[1].get_name()) + "\n" 
                         msg_part2 = "Dataframe:\n" + str(data[2].dataframe_to_string())
                         self.main_queue.put((msg_part1+msg_part2), block=True, timeout=None)
-                        # self.DataframeField.setText(msg_part1 + msg_part2)
                         
     def add_item_keyvaluestore(self, msg: str):
         item = QtWidgets.QListWidgetItem()
@@ -271,6 +273,7 @@ class Ui_MainWindow(object):
 "    color: rgb(238, 238, 236);\n"
 "}")
         self.runApplication.setObjectName("runApplication")
+        self.runApplication.clicked.connect(self.run_application)
         self.nodeID = QtWidgets.QLCDNumber(self.centralwidget)
         self.nodeID.setGeometry(QtCore.QRect(820, 10, 211, 51))
         font = QtGui.QFont()

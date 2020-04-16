@@ -14,7 +14,7 @@ class Client:
     '''
     Initialises the client object.
     '''
-    def __init__(self, ip: str, port: int, node_name: int, shared_queue: Queue):
+    def __init__(self, ip: str, port: int, node_name: int, shared_queue: Queue, app_queue: Queue):
         self.ip = ip
         self.port = port
         self.home_node = node_name
@@ -25,14 +25,18 @@ class Client:
         self.username_header = f"{len(self.username):<{HEADER_LENGTH}}".encode('utf-8')
         self.client_socket.send(self.username_header + self.username)
         
-        self.read_thread = Thread(target=self.read, args=(shared_queue,))
+        self.read_thread = Thread(target=self.read, args=(shared_queue, app_queue,))
         self.read_thread.start()
         
         self.store = KeyValueStore(node_name)
         self.tmp_dataframe = None
 
+    '''
+    Retrieve the value stored with the given key
+    '''
     def retrieve_value(self, k: Key):
         return self.store.get_value(k)
+    
     '''
     Sends a message to the specified node.
     '''
@@ -48,7 +52,7 @@ class Client:
     Reads the incoming message or throws an exception.
     Updates the key value store that is associated with the node.
     '''
-    def read(self, shared_queue: Queue):
+    def read(self, shared_queue: Queue, app_queue: Queue):
         while True:
             try:
                 message_header = self.client_socket.recv(HEADER_LENGTH)
@@ -78,12 +82,15 @@ class Client:
                     k = Key(msg[1], self.home_node)         # key
                     d = self.store.get_value(k)             # dataframe
                     data = "datakv|" + str(self.home_node) + "|" + str(msg[1]) + "|" + serialize_dataframe(d) 
+                    print("I have created all the relevant data")
                     self.send(int(msg[2]), data)
+                    print("I even sent it along")
 
                 elif (msg[0] == "datakv"):
                     k = Key(str(msg[2]), int(msg[1]))
                     d = deserialize_dataframe(msg[3])
                     shared_queue.put(('retrieve', k, d), block=True, timeout=None)
+                    app_queue.put((k, d), block=True, timeout=None)
 
             except IOError as e:
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:

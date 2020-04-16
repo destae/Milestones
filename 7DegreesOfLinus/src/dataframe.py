@@ -13,8 +13,7 @@ class Dataframe:
         self.data = data
         if kv and key:
             kv.add_key_value(key, self.data)
-        
-    
+          
     #Constructor that creates a new Dataframe from an array
     @classmethod
     def from_array(cls, key: Key, kv: KeyValueStore, size: int, array: list, arr_type: str='B'):
@@ -44,6 +43,9 @@ class Dataframe:
     def get_type(self, col: int, row: int):
         if (col < self.get_ncols() and col >= 0 and row >= 0 and row < self.get_nrows()):
             return self.schema.get_schema()[col]
+
+    def get_data(self):
+        return self.data
 
     ## Constructs a string from the dataframe
     def dataframe_to_string(self):

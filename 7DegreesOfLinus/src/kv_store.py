@@ -55,6 +55,6 @@ class KeyValueStore:
     def get_value(self, key: Key):
         return self.key_store.get(key.get_name())
 
-
+    
     def wait_and_get(self, key: Key):
         return self.get_value(key)
